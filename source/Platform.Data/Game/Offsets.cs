@@ -70,6 +70,7 @@ public class Offsets
     public const int AbilityPenPerc = 0x11C8;
     public const int AbilityHaste = 0x1A00;
     public const int Level = 0x4038;
+    public const int LevelPoints = 0x3FF8;
     public const int Name = 0x3850;
 
     #endregion

@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <Reference Include="ImGui.NET">
-      <HintPath>..\..\libs\imgui.net\ImGuiScene\bin\Release\net7.0\ImGui.NET.dll</HintPath>
+      <HintPath>..\..\libs\imgui.net\ImGuiScene\bin\Debug\net7.0\ImGui.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
 
