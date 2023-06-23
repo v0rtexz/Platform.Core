@@ -44,6 +44,9 @@
     <Reference Include="ImGuiScene">
       <HintPath>..\..\libs\imgui.net\ImGuiScene\bin\Release\net7.0\ImGuiScene.dll</HintPath>
     </Reference>
+    <Reference Include="PInvoke.User32">
+      <HintPath>..\Platform.Loader\bin\Debug\net7.0\PInvoke.User32.dll</HintPath>
+    </Reference>
     <Reference Include="SDL2-CS">
       <HintPath>..\..\libs\imgui.net\ImGuiScene\bin\Release\net7.0\SDL2-CS.dll</HintPath>
     </Reference>

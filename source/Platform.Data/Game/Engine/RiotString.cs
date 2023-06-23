@@ -29,8 +29,6 @@
 
 #endregion
 
-using Platform.Data.Game.Components;
-
 namespace Platform.Data.Game.Engine;
 
 using Platform.Data.Game.Components;

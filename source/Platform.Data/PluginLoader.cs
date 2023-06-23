@@ -35,11 +35,8 @@ using Platform.Data.Modules.Interfaces;
 namespace Platform.Data;
 
 using Platform.Data.Modules.Interfaces;
-
 using Autofac;
-
 using JetBrains.Annotations;
-
 using System.Reflection;
 using Platform.Data.Container;
 using Serilog;
@@ -63,9 +60,7 @@ internal class PluginLoader : IDisposable
 
     #region Properties
 
-    [NotNull]
-    [ItemNotNull]
-    internal List<IScript> Plugins { get; }
+    [NotNull] [ItemNotNull] internal List<IScript> Plugins { get; }
 
     #endregion
 
@@ -117,6 +112,9 @@ internal class PluginLoader : IDisposable
                 if (file.EndsWith(".dll"))
                 {
                     var assembly = Assembly.LoadFrom(Path.GetFullPath(file));
+
+                    // Change the working directory of the loaded assembly
+                    Directory.SetCurrentDirectory(Directory.GetCurrentDirectory());
                 }
             }
         }
@@ -141,7 +139,6 @@ internal class PluginLoader : IDisposable
         {
             throw new IOException("Exception while checking for the plugins directory: " + e.Message);
         }
-
     }
 
     /// <summary>

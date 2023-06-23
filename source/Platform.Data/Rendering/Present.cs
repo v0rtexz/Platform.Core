@@ -51,7 +51,11 @@ internal class Present
 
     public Present()
     {
-        Render();
+        Task.Run(() =>
+        {
+            Render();
+        });
+       
     }
 
     void Test()
@@ -72,23 +76,7 @@ internal class Present
 
         ComponentController.GetComponent<Renderer>().UpdateRenderer();
         EventManager.InvokeCallback<EventDelegate.EvtOnUpdate>();
-
-        AIBaseClient player = ComponentController.GetComponent<World>().GetLocalPlayer();
-
-        Drawing.Add3DCircle(player.Pos, player.AttackRange, true, 2f);
-
-        Vector2 screenPos = Vector2.Zero;
-        ComponentController.GetComponent<Renderer>().WorldToScreen(player.Pos, ref screenPos);
-
-        Drawing.AddText(player.GetName().ToUpper(), screenPos, 1.5f);
-
-        string opAFText = "LeagueSharp (SoonTM, OP af, spinning to victory GGWP EZ)";
-        Vector2 screenSize = ImGui.GetIO().DisplaySize;
-        float textWidth = ImGui.CalcTextSize(opAFText.ToUpper()).X;
-        Vector2 textPos = new Vector2((screenSize.X - textWidth) / 2, 20);
-        Drawing.AddText(opAFText.ToUpper(), textPos, 1.5f);
-
-        Console.WriteLine(Drawing.DrawQueue.Count);
+        
         if (Drawing.DrawQueue.Count > 0)
         {
             Action drawing = Drawing.DrawQueue.Dequeue();

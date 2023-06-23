@@ -33,16 +33,16 @@ using Platform.Data.Container;
 using Platform.Data.Utils;
 using Platform.Data.Exceptions;
 
+if (ScriptContainer.Build() == OperationResult.FAILURE)
+{
+    throw new ContainerBuildException("Failed to build script container!");
+}
+
 if (CoreContainer.Initialize() == OperationResult.FAILURE)
 {
     throw new ContainerBuildException("Failed to build core container!");
 }
 Logger.Get().Debug("{ContainerType} initialized.", "Core Container");
 
-if (ScriptContainer.Build() == OperationResult.FAILURE)
-{
-    throw new ContainerBuildException("Failed to build script container!");
-}
-Logger.Get().Debug("{ContainerType} initialized.", "Script Container");
 
 Console.ReadLine();

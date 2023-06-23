@@ -29,11 +29,6 @@
 
 #endregion
 
-using Platform.Data.Events;
-using Platform.Data.Game.Components;
-using Platform.Data.Rendering;
-using Platform.Data.Utils;
-
 namespace Platform.Data.Container;
 
 using Platform.Data.Utils;
