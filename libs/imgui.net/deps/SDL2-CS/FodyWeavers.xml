@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+  <Costura IncludeDebugSymbols="false">
+    <Unmanaged64Assemblies>
+      SDL2
+      SDL2_Image
+      zlib1
+      libpng16-16
+      libjpeg-9
+      libtiff-5
+      libwebp-7
+    </Unmanaged64Assemblies>
+    <PreloadOrder>
+      SDL2
+      SDL2_Image
+      zlib1
+      libpng16-16
+      libjpeg-9
+      libtiff-5
+      libwebp-7
+    </PreloadOrder>
+  </Costura>
+</Weavers>

@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>ImGui.NET</Title>
+    <Description>A .NET wrapper for the Dear ImGui library.</Description>
+    <Company>Eric Mellino</Company>
+    <Product>ImGui.NET</Product>
+    <Copyright>Copyright ©  2019</Copyright>
+    <AssemblyVersion>1.82</AssemblyVersion>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ImGui.NET</RootNamespace>
+    <AssemblyName>ImGui.NET</AssemblyName>
+    <TargetFramework>net7.0</TargetFramework>
+    <Platforms>x64</Platforms>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WarningLevel>4</WarningLevel>
+    <ErrorReport>prompt</ErrorReport>
+    <OutputPath>..\..\bin\Release\ImGui.NET-472\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="5.3.0" />
+    <PackageReference Include="Fody" Version="6.5.1" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
+    
+    <!-- TODO(goat): THIS IS A HACK!!!! We should figure out why this is not being done by the build system!! -->
+    <AdditionalFiles Include="runtimes\win-x64\native\cimgui.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>runtimes\win-x64\native\cimgui.dll</TargetPath>
+    </AdditionalFiles>
+    <AdditionalFiles Include="runtimes\win-x64\native\cimguizmo.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>runtimes\win-x64\native\cimguizmo.dll</TargetPath>
+    </AdditionalFiles>
+    <AdditionalFiles Include="runtimes\win-x64\native\cimplot.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>runtimes\win-x64\native\cimplot.dll</TargetPath>
+    </AdditionalFiles>
+
+    <Content Include="runtimes\win-x64\native\cimgui.dll" PackagePath="runtimes\win-x64\native\cimgui.dll" />
+    <Content Include="runtimes\win-x64\native\cimguizmo.dll" PackagePath="runtimes\win-x64\native\cimguizmo.dll" />
+    <Content Include="runtimes\win-x64\native\cimplot.dll" PackagePath="runtimes\win-x64\native\cimplot.dll" />
+  </ItemGroup>
+</Project>

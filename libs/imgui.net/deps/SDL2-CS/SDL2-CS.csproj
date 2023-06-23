@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <TargetFramework>net7.0</TargetFramework>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>SDL2</RootNamespace>
+    <AssemblyName>SDL2-CS</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'x64' ">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="SDL2-CS.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="5.3.0" PrivateAssets="all" IncludeAssets="all" /> 
+    <PackageReference Include="Fody" Version="6.5.1" PrivateAssets="all" IncludeAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="costura64\libjpeg-9.dll" />
+    <EmbeddedResource Include="costura64\libpng16-16.dll" />
+    <EmbeddedResource Include="costura64\libtiff-5.dll" />
+    <EmbeddedResource Include="costura64\libwebp-7.dll" />
+    <EmbeddedResource Include="costura64\SDL2.dll" />
+    <EmbeddedResource Include="costura64\SDL2_image.dll" />
+    <EmbeddedResource Include="costura64\zlib1.dll" />
+    <Content Include="FodyWeavers.xml" />
+  </ItemGroup>
+</Project>
