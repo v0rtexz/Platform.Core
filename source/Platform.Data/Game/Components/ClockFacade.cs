@@ -30,13 +30,11 @@
 #endregion
 
 using System.Diagnostics.CodeAnalysis;
-using Platform.Data.Memory;
-using Platform.Data.Utils;
-
-namespace Platform.Data.Game.Components;
-
-using Platform.Data.Utils;
+using Ensage.Data.Memory;
+using Ensage.Data.Utils;
 using ProcessMemoryUtilities.Managed;
+
+namespace Ensage.Data.Game.Components;
 
 /// <summary>
 /// Represents the clock of the game.
@@ -44,11 +42,6 @@ using ProcessMemoryUtilities.Managed;
 public class ClockFacade : IGameComponent
 {
     #region Properties
-
-    /// <summary>
-    /// The memory reading instance
-    /// </summary>
-    [NotNull] private Memory.Memory memory;
 
     /// <summary>
     /// The module manager instance
@@ -62,11 +55,10 @@ public class ClockFacade : IGameComponent
     /// <summary>
     /// Initializes a new instance of the <see cref="ClockFacade"/> class.
     /// </summary>
-    /// <param name="memory">The memory reading instance.</param>
+    /// <param name="memoryAccessor">The memory reading instance.</param>
     /// <param name="moduleManager">The module manager instance.</param>
-    public ClockFacade([NotNull] Memory.Memory memory, [NotNull] ModuleManager moduleManager)
+    public ClockFacade([NotNull] ModuleManager moduleManager)
     {
-        this.memory = memory;
         this.moduleManager = moduleManager;
     }
 
@@ -81,7 +73,8 @@ public class ClockFacade : IGameComponent
     public float GetGameTime()
     {
         float gametime = 0f;
-        NativeWrapper.ReadProcessMemory<float>(memory.Handle, memory.BaseAddress + Offsets.GameTime, ref gametime);
+        NativeWrapper.ReadProcessMemory<float>(MemoryAccessor.Handle, MemoryAccessor.BaseAddress + Offsets.GameTime,
+            ref gametime);
 
         return gametime;
     }
@@ -91,7 +84,7 @@ public class ClockFacade : IGameComponent
         long offset = moduleManager.GetModule("OWClient.dll") - 0x1A112510E34;
         Console.WriteLine(offset);
         int fps = 0;
-        NativeWrapper.ReadProcessMemory<int>(memory.Handle,
+        NativeWrapper.ReadProcessMemory<int>(MemoryAccessor.Handle,
             (IntPtr)(moduleManager.GetModule("OWClient.dll") + 0x3CC920), ref fps);
         return fps;
     }

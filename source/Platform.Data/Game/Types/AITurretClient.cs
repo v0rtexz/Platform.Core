@@ -24,31 +24,38 @@
 //    COPIED, TRANSFERRED, SOLD, DISTRIBUTED, OR OTHERWISE MADE
 //    AVAILABLE TO OTHER INDIVIDUALS WITHOUT WRITTEN CONSENT
 //    AND PERMISSION FROM Ensage GMBH.
-//
+// 
 // ////////////////////////////////////////////////////////////////////////////////
 
 #endregion
 
-namespace Ensage.Data.Utils;
+using Ensage.Data.Game.Components;
+
+namespace Ensage.Data.Game.Types;
 
 /// <summary>
-/// Indicates if the operation was successful.
+/// Type for turrets. Inherited by <see cref="AIBaseClient"/>.
 /// </summary>
-public enum OperationResult : short
+public class AITurretClient : AIBaseClient
 {
-    /// <summary>
-    /// Operation failed
-    /// </summary>
-    FAILURE,
+    #region Properties
+    
+    #endregion
 
-
-    /// <summary>
-    /// Operation is still ongoing or the operation status has not been updated.
-    /// </summary>
-    OPERATIONAL,
+    #region Constructors and Destructors
 
     /// <summary>
-    /// Operation was successful
+    /// Initializes a new instance of the <see cref="AIHeroClient"/> class.
     /// </summary>
-    SUCCESS,
+    /// <param name="address">The address of the unit.</param>
+    public AITurretClient(long address)
+        : base(address)
+    {
+    }
+
+    #endregion
+
+    #region Methods
+
+    #endregion
 }

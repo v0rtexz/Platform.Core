@@ -29,9 +29,9 @@
 
 #endregion
 
-using Platform.Data.Container;
-using Platform.Data.Utils;
-using Platform.Data.Exceptions;
+using Ensage.Data.Container;
+using Ensage.Data.Exceptions;
+using Ensage.Data.Utils;
 
 if (ScriptContainer.Build() == OperationResult.FAILURE)
 {

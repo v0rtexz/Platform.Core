@@ -33,7 +33,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Serilog;
 
-namespace Platform.Data.Memory;
+namespace Ensage.Data.Memory;
 
 public class ModuleManager
 {
@@ -46,8 +46,6 @@ public class ModuleManager
 
     [NotNull] private ILogger logger;
 
-    [NotNull] private Memory memory;
-
     #endregion
 
     #region Constructors and Destructors
@@ -56,11 +54,10 @@ public class ModuleManager
     /// Initializes a new instance of the <see cref="ModuleManager"/> class.
     /// </summary>
     /// <param name="logger">Injected logger instance.</param>
-    /// <param name="memory">Injected Memory instance.</param>
-    public ModuleManager([NotNull] ILogger logger, [NotNull] Memory memory)
+    /// <param name="memoryAccessor">Injected Memory instance.</param>
+    public ModuleManager([NotNull] ILogger logger)
     {
         this.logger = logger;
-        this.memory = memory;
 
         this.moduleList = new Dictionary<string, IntPtr>();
 
@@ -98,7 +95,7 @@ public class ModuleManager
     /// <param name="moduleName">The module name to init.</param>
     private bool InitModule(string moduleName)
     {
-        foreach (ProcessModule module in Process.GetProcessById(memory.ProcessID).Modules)
+        foreach (ProcessModule module in Process.GetProcessById(MemoryAccessor.ProcessID).Modules)
         {
             //   Console.WriteLine(module.ModuleName);
             if (module.ModuleName.Equals(moduleName))

@@ -24,31 +24,49 @@
 //    COPIED, TRANSFERRED, SOLD, DISTRIBUTED, OR OTHERWISE MADE
 //    AVAILABLE TO OTHER INDIVIDUALS WITHOUT WRITTEN CONSENT
 //    AND PERMISSION FROM Ensage GMBH.
-//
+// 
 // ////////////////////////////////////////////////////////////////////////////////
 
 #endregion
 
-namespace Ensage.Data.Utils;
+using Ensage.Data.Game.Types;
+using Ensage.Data.Memory;
+
+namespace Ensage.Data.Game.Components.ManagerTemplates;
+
+using System.Collections;
+using ProcessMemoryUtilities.Managed;
 
 /// <summary>
-/// Indicates if the operation was successful.
+/// Responsible for accessing the <see cref="AIMinionClient"/> instance of <see cref="ManagerTemplate"/>.
 /// </summary>
-public enum OperationResult : short
+public class TurretManager : ManagerTemplate, IEnumerable<AITurretClient>
 {
     /// <summary>
-    /// Operation failed
+    /// Enumerates all Heroes.
     /// </summary>
-    FAILURE,
+    /// <returns></returns>
+    public IEnumerator<AITurretClient> GetEnumerator()
+    {
+        for (int i = 0; i < this.GetListSize(ManagerTemplateType.Turrets); i++)
+        {
+            long minionPtr = 0;
+            NativeWrapper.ReadProcessMemory(MemoryAccessor.Handle, GetListPtr(ManagerTemplateType.Turrets) + i * 0x8,
+                ref minionPtr);
 
+            AITurretClient turret = new AITurretClient(minionPtr);
 
-    /// <summary>
-    /// Operation is still ongoing or the operation status has not been updated.
-    /// </summary>
-    OPERATIONAL,
+            yield return turret;
+        }
+    }
 
-    /// <summary>
-    /// Operation was successful
-    /// </summary>
-    SUCCESS,
+    public TurretManager()
+        : base()
+    {
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }

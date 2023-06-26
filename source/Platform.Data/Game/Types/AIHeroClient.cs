@@ -29,7 +29,10 @@
 
 #endregion
 
-namespace Platform.Data.Game.Types;
+using Ensage.Data.Game.Components;
+using Ensage.Data.Utils;
+
+namespace Ensage.Data.Game.Types;
 
 /// <summary>
 /// Type for heroes. Inherited by <see cref="AIBaseClient"/>.
@@ -38,7 +41,10 @@ public class AIHeroClient : AIBaseClient
 {
     #region Properties
 
-    
+    public short LevelUpPoints => GetProperty<short>(Offsets.LevelPoints);
+    public float TotalEXP => GetProperty<float>(Offsets.TotalEXP);
+    public string ChampionName => GetChampionName();
+
     #endregion
 
     #region Constructors and Destructors
@@ -54,6 +60,15 @@ public class AIHeroClient : AIBaseClient
 
     #endregion
 
+    /// <summary>
+    /// Get the name of the champion. This usually differs to the ObjectName.
+    /// </summary>
+    /// <returns>The name of the object.</returns>
+    private string GetChampionName()
+    {
+        return RiotString.Get(this.address + Offsets.ChampionName);
+    }
+    
     #region Methods
 
     #endregion

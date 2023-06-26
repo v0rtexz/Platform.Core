@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace Platform.Data.Events;
+namespace Ensage.Data.Events;
 
 /// <summary>
 /// Responsible for the registering and erasing of events.
@@ -72,7 +72,7 @@ public class EventManager
         switch (typeof(TCallback))
         {
             case Type t when t == typeof(EventDelegate.EvtOnUpdate):
-                EvtOnUpdate.Invoke();
+                EvtOnUpdate?.Invoke();
                 break;
         }
     }

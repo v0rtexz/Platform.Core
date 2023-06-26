@@ -29,62 +29,49 @@
 
 #endregion
 
-using Platform.Data.Exceptions;
-using Platform.Data.Utils;
-
-namespace Platform.Data.Memory;
-
-using Platform.Data.Exceptions;
-using Platform.Data.Utils;
 using System.Diagnostics;
+using Ensage.Data.Exceptions;
+using Ensage.Data.Utils;
 using JetBrains.Annotations;
 using ProcessMemoryUtilities.Managed;
 using ProcessMemoryUtilities.Native;
 using Serilog;
 
+namespace Ensage.Data.Memory;
+
 /// <summary>
 /// Holds data for the memory.
 /// </summary>
-public class Memory
+public static class MemoryAccessor
 {
     #region Properties
-
-    [NotNull] private readonly ILogger logger;
 
     /// <summary>
     /// The process id of the game process.
     /// </summary>
-    internal int ProcessID { get; set; }
+    internal static int ProcessID { get; set; }
 
     /// <summary>
     /// The handle to the game process.
     /// </summary>
     [NotNull]
-    internal IntPtr Handle { get; set; }
+    internal static IntPtr Handle { get; set; }
 
     /// <summary>
     /// The base address of the game process.
     [NotNull]
-    internal IntPtr BaseAddress { get; set; }
+    internal static IntPtr BaseAddress { get; set; }
 
     #endregion
 
-    #region Constructors and Destructors
+    #region Methods
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Memory"/> class.
-    /// </summary>
-    /// <param name="logger">The injected logger</param>
-    public Memory([NotNull] ILogger logger)
+    internal static void Init()
     {
-        this.logger = logger;
-
-        logger.Debug("Initializing memory");
-
-        if (this.InitMemory() < OperationResult.SUCCESS)
+        if (InitMemory() < OperationResult.SUCCESS)
         {
-            this.logger.Error("Failed to initiate memory! Retrying in 10 seconds...");
-            OperationResult finalResult = Retry.Do(this.InitMemory, TimeSpan.FromSeconds(10), 1);
+            Console.WriteLine("Failed to initiate memory! Retrying in 10 seconds...");
+            OperationResult finalResult = Retry.Do(InitMemory, TimeSpan.FromSeconds(10), 1);
 
             if (finalResult != OperationResult.SUCCESS)
             {
@@ -93,15 +80,11 @@ public class Memory
         }
     }
 
-    #endregion
-
-    #region Methods
-
     /// <summary>
     /// Initiates the memory.
     /// </summary>
     /// <returns>Returns if the operation was successful or failed.</returns>
-    internal OperationResult InitMemory()
+    private static OperationResult InitMemory()
     {
         Process[] processes = Process.GetProcessesByName("League of Legends");
 
@@ -121,16 +104,16 @@ public class Memory
             return OperationResult.FAILURE;
         }
 
-        this.ProcessID = gameProc.Id;
-        this.logger.Debug("ProcessID: {ProcessID} ", this.ProcessID);
+        ProcessID = gameProc.Id;
+        Console.WriteLine("ProcessID: " + ProcessID);
 
-        this.Handle = NativeWrapper.OpenProcess(ProcessAccessFlags.ReadWrite, this.ProcessID);
-        this.logger.Debug("Handle: {Handle}", this.Handle);
+        Handle = NativeWrapper.OpenProcess(ProcessAccessFlags.ReadWrite, ProcessID);
+        Console.WriteLine("Handle: " + Handle);
 
-        this.BaseAddress = Process.GetProcessById(this.ProcessID).Modules[0].BaseAddress;
-        this.logger.Debug("BaseAddress: {BaseAddr}", this.BaseAddress);
+        BaseAddress = Process.GetProcessById(ProcessID).Modules[0].BaseAddress;
+        Console.WriteLine("BaseAddr: " + BaseAddress);
 
-        return this.BaseAddress != IntPtr.Zero ? OperationResult.SUCCESS : OperationResult.FAILURE;
+        return BaseAddress != IntPtr.Zero ? OperationResult.SUCCESS : OperationResult.FAILURE;
     }
 
     #endregion

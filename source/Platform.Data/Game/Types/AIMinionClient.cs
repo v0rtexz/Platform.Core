@@ -29,44 +29,33 @@
 
 #endregion
 
-using Platform.Data.Game.Types;
-using Platform.Data.Utils;
-using ProcessMemoryUtilities.Managed;
+using Ensage.Data.Game.Components;
 
-namespace Platform.Data.Game.Components;
-
-using Platform.Data.Utils;
-using JetBrains.Annotations;
-using Serilog;
+namespace Ensage.Data.Game.Types;
 
 /// <summary>
-/// World component.
+/// Type for minions. Inherited by <see cref="AIBaseClient"/>.
 /// </summary>
-public class World : IGameComponent
+public class AIMinionClient : AIBaseClient
 {
-    [NotNull] private ILogger logger;
+    #region Properties
+    
+    #endregion
 
-    private Memory.Memory memory;
+    #region Constructors and Destructors
 
-    public World(ILogger logger, Memory.Memory memory)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AIMinionClient"/> class.
+    /// </summary>
+    /// <param name="address">The address of the unit.</param>
+    public AIMinionClient(long address)
+        : base(address)
     {
-        this.logger = logger;
-        this.memory = memory;
-
-        logger.Debug("World created!");
     }
 
-    public OperationResult Construct()
-    {
-        return OperationResult.SUCCESS;
-    }
+    #endregion
 
-    public AIHeroClient GetLocalPlayer()
-    {
-        long player = 0;
-        NativeWrapper.ReadProcessMemory<long>(memory.Handle, (IntPtr)(memory.BaseAddress + Offsets.LocalPlayer),
-            ref player);
+    #region Methods
 
-        return new AIHeroClient(player);
-    }
+    #endregion
 }

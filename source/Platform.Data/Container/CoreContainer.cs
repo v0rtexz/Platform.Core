@@ -29,16 +29,19 @@
 
 #endregion
 
-namespace Platform.Data.Container;
-
-using Platform.Data.Utils;
-using Platform.Data.Rendering;
-using Platform.Data.Game.Components;
 using Autofac;
+using Ensage.Data.Events;
+using Ensage.Data.Game;
+using Ensage.Data.Game.Components;
+using Ensage.Data.Game.Components.ManagerTemplates;
+using Ensage.Data.Memory;
+using Ensage.Data.Rendering;
+using Ensage.Data.Utils;
+using JetBrains.Annotations;
 using Serilog;
 using Serilog.Events;
-using JetBrains.Annotations;
-using Platform.Data.Events;
+
+namespace Ensage.Data.Container;
 
 /// <summary>
 /// Container which containts instances for the core functionality.
@@ -79,12 +82,14 @@ public class CoreContainer
         logger.Write(LogEventLevel.Information,
             "---------------------------------------Core Container---------------------------------------");
 
+        MemoryAccessor.Init();
+
         containerBuilder = new ContainerBuilder();
 
         // Register the Logger
         containerBuilder.RegisterType<Utils.Logger>().As<ILogger>().SingleInstance();
-        containerBuilder.RegisterType<Memory.Memory>().As<Memory.Memory>().SingleInstance().AutoActivate();
-        containerBuilder.RegisterType<Memory.ModuleManager>().As<Memory.ModuleManager>().SingleInstance().AutoActivate();
+        containerBuilder.RegisterType<Memory.ModuleManager>().As<Memory.ModuleManager>().SingleInstance()
+            .AutoActivate();
 
         // Register callback types to the builder
         RegisterCallbacks();
@@ -106,7 +111,7 @@ public class CoreContainer
     /// Get the Instance of the initialized <see cref="ILifetimeScope"/> Instance.
     /// </summary>
     /// <returns>The Instance.</returns>
-    internal static ILifetimeScope Get()
+    internal static ILifetimeScope? Get()
     {
         return scope;
     }
@@ -116,7 +121,7 @@ public class CoreContainer
     /// </summary>
     /// <returns>The container builder.</returns>
     [CanBeNull]
-    internal static ContainerBuilder GetBuilder()
+    internal static ContainerBuilder? GetBuilder()
     {
         return containerBuilder;
     }
@@ -150,8 +155,14 @@ public class CoreContainer
     {
         logger.Debug("Registering Game Components...");
         ComponentController.RegisterComponent<World>();
-        ComponentController.RegisterComponent<Renderer>();
+        ComponentController.RegisterComponent<Engine>();
+        ComponentController.RegisterComponent<Renderer>(true, false, true);
         ComponentController.RegisterComponent<ClockFacade>();
+
+        ComponentController.RegisterComponent<HeroManager>();
+        ComponentController.RegisterComponent<MinionManager>();
+        ComponentController.RegisterComponent<TurretManager>();
+        ComponentController.RegisterComponent<MissileMap>();
     }
 
     /// <summary>

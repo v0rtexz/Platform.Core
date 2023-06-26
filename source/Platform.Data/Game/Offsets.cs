@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace Platform.Data.Game;
+namespace Ensage.Data.Game;
 
 /// <summary>
 /// Class holding all memory offsets.
@@ -69,8 +69,39 @@ public class Offsets
     public const int AbilityPenFlat = 0x11C0;
     public const int AbilityPenPerc = 0x11C8;
     public const int AbilityHaste = 0x1A00;
-    public const int Level = 0x4038;
-    public const int Name = 0x3850;
+    public const int Level = 0x4830;
+    public const int TotalEXP = 0x3FA0;
+    public const int LevelPoints = 0x3FF8;
+    public const int ChampionName = 0x3850;
+    public const int ObjectName = 0x35F0; // seems to hide behind a pointer
+    public const int NetworkID = 0xC8;
+
+    public const int UnitComponentInfo = 0x3680;
+    public const int UnitComponentInfoProperties = 0x28;
+
+    // Inside UnitComponentInfo Properties
+    internal static readonly int BoundingRadius = 0x564; // if > 2000 bounding radius is 65.
+    internal static readonly int RoleString = 0x800; // Example: 'marksman'
+
+    internal static readonly int BaseAttackSpeed = 0x254;
+
+    //base as and ratio are same for most champs, but not for all.
+    internal static readonly int AttackSPeedRatio = 0x258;
+    internal static readonly int IsHero = 0x84; // bool, true if its a hero
+    internal static readonly int ObjectType = 0x768;
+    internal static readonly int ObjectTypeDetailed = 0x20;
+
+    #endregion
+
+    #region ManagerTemplates
+
+    public const int HeroList = 0x213DC68;
+    public const int MinionList = 0x3998608;
+    public const int TurretList = 0x51E4D20;
+    public const int MissileMap = 0x51F6CD0;
+
+    public const int ManagerTemplateListPtr = 0x8;
+    public const int ManagerTemplateSize = 0x10;
 
     #endregion
 

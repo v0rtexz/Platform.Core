@@ -29,14 +29,11 @@
 
 #endregion
 
-using Platform.Data.Container;
-using Platform.Data.Utils;
-
-namespace Platform.Data.Game.Components;
-
 using Autofac;
-using Platform.Data.Container;
-using Platform.Data.Utils;
+using Ensage.Data.Container;
+using Ensage.Data.Utils;
+
+namespace Ensage.Data.Game.Components;
 
 /// <summary>
 /// Accessor for all <see cref="IGameComponent"/>.
@@ -52,7 +49,8 @@ public static class ComponentController
     /// <param name="externallyAllowed">True if it should be registered under ExternallyAllowed.</param>
     /// /// <param name="autoActivate">True if the type should be automatically activated.s</param>
     /// <returns></returns>
-    internal static OperationResult RegisterComponent<T>(bool singleton = true, bool externallyAllowed = false, bool autoActivate = true)
+    internal static OperationResult RegisterComponent<T>(bool singleton = true, bool externallyAllowed = false, bool autoActivate = false)
+        where T : notnull
     {
         var type = CoreContainer.GetBuilder().RegisterType<T>().As<T>();
 
@@ -80,8 +78,9 @@ public static class ComponentController
     /// </summary>
     /// <typeparam name="T">The instance type to get.</typeparam>
     /// <returns>The instance of the component.</returns>
-    public static T GetComponent<T>()
+    internal static T GetComponent<T>()
+        where T : notnull
     {
-        return CoreContainer.Get().Resolve<T>();
+        return (CoreContainer.Get() ?? throw new InvalidOperationException()).Resolve<T>();
     }
 }

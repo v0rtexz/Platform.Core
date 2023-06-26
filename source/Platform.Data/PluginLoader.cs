@@ -29,17 +29,14 @@
 
 #endregion
 
-using Platform.Data.Container;
-using Platform.Data.Modules.Interfaces;
-
-namespace Platform.Data;
-
-using Platform.Data.Modules.Interfaces;
-using Autofac;
-using JetBrains.Annotations;
 using System.Reflection;
-using Platform.Data.Container;
+using Autofac;
+using Ensage.Data.Container;
+using Ensage.Data.Modules.Interfaces;
+using JetBrains.Annotations;
 using Serilog;
+
+namespace Ensage.Data;
 
 /// <summary>
 /// Responsible for loading all external plugins.

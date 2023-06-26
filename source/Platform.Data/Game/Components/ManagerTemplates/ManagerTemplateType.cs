@@ -24,31 +24,20 @@
 //    COPIED, TRANSFERRED, SOLD, DISTRIBUTED, OR OTHERWISE MADE
 //    AVAILABLE TO OTHER INDIVIDUALS WITHOUT WRITTEN CONSENT
 //    AND PERMISSION FROM Ensage GMBH.
-//
+// 
 // ////////////////////////////////////////////////////////////////////////////////
 
 #endregion
 
-namespace Ensage.Data.Utils;
+namespace Ensage.Data.Game.Components.ManagerTemplates;
 
 /// <summary>
-/// Indicates if the operation was successful.
+/// Flags for the different types of manager templates.
 /// </summary>
-public enum OperationResult : short
+[Flags]
+public enum ManagerTemplateType
 {
-    /// <summary>
-    /// Operation failed
-    /// </summary>
-    FAILURE,
-
-
-    /// <summary>
-    /// Operation is still ongoing or the operation status has not been updated.
-    /// </summary>
-    OPERATIONAL,
-
-    /// <summary>
-    /// Operation was successful
-    /// </summary>
-    SUCCESS,
+    Heroes = 1 << 0,
+    Minions = 1 << 1,
+    Turrets = 1 << 2,
 }

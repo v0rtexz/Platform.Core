@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace Platform.Data.Utils;
+namespace Ensage.Data.Utils;
 
 /// <summary>
 /// Provides the functionality to retry a given functionality.

@@ -29,15 +29,11 @@
 
 #endregion
 
-using Platform.Data.Container;
-
-namespace Platform.Data.Exceptions;
-
-using Platform.Data.Container;
-
 using Autofac;
-
+using Ensage.Data.Container;
 using Serilog;
+
+namespace Ensage.Data.Exceptions;
 
 internal class MemoryException : Exception
 {

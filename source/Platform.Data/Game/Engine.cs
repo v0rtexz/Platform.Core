@@ -24,31 +24,54 @@
 //    COPIED, TRANSFERRED, SOLD, DISTRIBUTED, OR OTHERWISE MADE
 //    AVAILABLE TO OTHER INDIVIDUALS WITHOUT WRITTEN CONSENT
 //    AND PERMISSION FROM Ensage GMBH.
-//
+// 
 // ////////////////////////////////////////////////////////////////////////////////
 
 #endregion
 
-namespace Ensage.Data.Utils;
+using Ensage.Data.Game.Components;
+using JetBrains.Annotations;
+using Serilog;
+
+namespace Ensage.Data.Game;
 
 /// <summary>
-/// Indicates if the operation was successful.
+/// Contains components that are not directly attached to the game or games objects.
 /// </summary>
-public enum OperationResult : short
+public class Engine
 {
-    /// <summary>
-    /// Operation failed
-    /// </summary>
-    FAILURE,
+    #region Properties
 
+    public ClockFacade Clock { get; set; }
+    public Renderer Renderer { get; set; }
+
+    private ILogger logger;
+
+    #endregion
+
+    #region Constructors and Destructors
 
     /// <summary>
-    /// Operation is still ongoing or the operation status has not been updated.
+    /// Initializes a new instance of the <see cref="Engine"/> class.
     /// </summary>
-    OPERATIONAL,
+    /// <param name="logger">The logger.</param>
+    /// <param name="clock">The ingame clock.</param>
+    /// <param name="renderer">The renderer.</param>
+    /// <exception cref="ArgumentNullException">Throws an Exception if one of the parameters is NULL.</exception>
+    public Engine(
+        [NotNull] ILogger logger,
+        [NotNull] ClockFacade clock,
+        [NotNull] Renderer renderer
+    )
+    {
+        this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        this.Clock = clock ?? throw new ArgumentNullException(nameof(clock));
+        this.Renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
+    }
 
-    /// <summary>
-    /// Operation was successful
-    /// </summary>
-    SUCCESS,
+    #endregion
+
+    #region Methods
+
+    #endregion
 }

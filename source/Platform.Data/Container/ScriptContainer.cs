@@ -29,18 +29,13 @@
 
 #endregion
 
-using Platform.Data.Utils;
-
-namespace Platform.Data.Container;
-
-using Platform.Data.Utils;
-
+using System.Diagnostics.CodeAnalysis;
 using Autofac;
-
+using Ensage.Data.Utils;
 using Serilog;
 using Serilog.Events;
 
-using System.Diagnostics.CodeAnalysis;
+namespace Ensage.Data.Container;
 
 /// <summary>
 /// Class which contains the functionality of container and script building.
@@ -128,6 +123,7 @@ public static class ScriptContainer
     /// </summary>
     /// <typeparam name="T">The object type to Initialize.</typeparam>
     internal static void RegisterModule<T>()
+        where T : notnull
     {
         containerBuilder.RegisterType<T>();
     }

@@ -29,14 +29,12 @@
 
 #endregion
 
-using Platform.Data.Container;
-
-namespace Platform.Data.Utils;
-
 using Autofac;
-using Platform.Data.Container;
+using Ensage.Data.Container;
 using Serilog;
 using Serilog.Events;
+
+namespace Ensage.Data.Utils;
 
 /// <summary>
 /// Logger class to implement the functionality of the logger.

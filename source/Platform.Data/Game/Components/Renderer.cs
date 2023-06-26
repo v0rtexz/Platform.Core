@@ -29,14 +29,15 @@
 
 #endregion
 
-using Platform.Data.Utils;
-
-namespace Platform.Data.Game.Components;
-
-using Platform.Data.Utils;
 using System.Runtime.InteropServices;
+using Ensage.Data.Memory;
+using Ensage.Data.Utils;
+using JetBrains.Annotations;
 using ProcessMemoryUtilities.Managed;
 using SharpDX;
+
+namespace Ensage.Data.Game.Components;
+
 using Vector2 = System.Numerics.Vector2;
 using Vector3 = System.Numerics.Vector3;
 
@@ -55,11 +56,6 @@ public class Renderer : IGameComponent
     }
 
     /// <summary>
-    /// Memory instance received through injection
-    /// </summary>
-    private Memory.Memory memory;
-
-    /// <summary>
     /// Instance of the renderer. Remains unchanged throughout the game.
     /// </summary>
     private long rendererInstance;
@@ -67,37 +63,35 @@ public class Renderer : IGameComponent
     /// <summary>
     /// Dynamic Viewmatrix. Updated on tick.
     /// </summary>
-    private Matrix viewMatrix;
+    private static Matrix viewMatrix;
 
     /// <summary>
     /// Dynamic View Projection Matrix. Updated on tick.
     /// </summary>
-    private Matrix viewProjectionMatrix;
+    private static Matrix viewProjectionMatrix;
 
     /// <summary>
     /// Displayinfo which contains the width and height of the display.
     /// </summary>
-    private DisplayInfo displayInfo;
+    private static DisplayInfo displayInfo;
 
     #endregion
 
     #region Constructors and Destructors
 
-    public Renderer(Memory.Memory memory)
+    public Renderer()
     {
-        this.memory = memory;
+        NativeWrapper.ReadProcessMemory<Matrix>(MemoryAccessor.Handle,
+            (IntPtr)(MemoryAccessor.BaseAddress + Offsets.ViewMatrix), ref viewMatrix);
 
-        NativeWrapper.ReadProcessMemory<Matrix>(memory.Handle,
-            (IntPtr)(memory.BaseAddress + Offsets.ViewMatrix), ref viewMatrix);
-
-        NativeWrapper.ReadProcessMemory<Matrix>(memory.Handle,
-            (IntPtr)(memory.BaseAddress + Offsets.ViewMatrix + 0x40), ref viewProjectionMatrix);
+        NativeWrapper.ReadProcessMemory<Matrix>(MemoryAccessor.Handle,
+            (IntPtr)(MemoryAccessor.BaseAddress + Offsets.ViewMatrix + 0x40), ref viewProjectionMatrix);
         //Get Renderer Instance
-        NativeWrapper.ReadProcessMemory<long>(memory.Handle,
-            memory.BaseAddress + Offsets.Renderer, ref rendererInstance);
+        NativeWrapper.ReadProcessMemory<long>(MemoryAccessor.Handle,
+            MemoryAccessor.BaseAddress + Offsets.Renderer, ref rendererInstance);
 
         //This is basically a typecast ( (RendererStruct*)*DWORD* )
-        NativeWrapper.ReadProcessMemory<DisplayInfo>(memory.Handle, (IntPtr)rendererInstance,
+        NativeWrapper.ReadProcessMemory<DisplayInfo>(MemoryAccessor.Handle, (IntPtr)rendererInstance,
             ref displayInfo);
     }
 
@@ -108,13 +102,13 @@ public class Renderer : IGameComponent
     /// <summary>
     /// Update the renderer values
     /// </summary>
-    public void UpdateRenderer()
+    internal void Update()
     {
-        NativeWrapper.ReadProcessMemory<Matrix>(memory.Handle,
-            (IntPtr)(memory.BaseAddress + Offsets.ViewMatrix), ref viewMatrix);
+        NativeWrapper.ReadProcessMemory<Matrix>(MemoryAccessor.Handle,
+            (IntPtr)(MemoryAccessor.BaseAddress + Offsets.ViewMatrix), ref viewMatrix);
 
-        NativeWrapper.ReadProcessMemory<Matrix>(memory.Handle,
-            (IntPtr)(memory.BaseAddress + Offsets.ViewMatrix + 0x40), ref viewProjectionMatrix);
+        NativeWrapper.ReadProcessMemory<Matrix>(MemoryAccessor.Handle,
+            (IntPtr)(MemoryAccessor.BaseAddress + Offsets.ViewMatrix + 0x40), ref viewProjectionMatrix);
     }
 
     /// <summary>
@@ -123,14 +117,15 @@ public class Renderer : IGameComponent
     /// <param name="pos">The 3D world position.</param>
     /// <param name="screenPos">The buffer for the result.</param>
     /// <returns>True if the transformation was successful.</returns>
-    public bool WorldToScreen(Vector3 pos, ref Vector2 screenPos)
+    [PublicAPI]
+    public static bool WorldToScreen(Vector3 pos, ref Vector2 screenPos)
     {
         Matrix matrix = Matrix.Multiply(viewMatrix, viewProjectionMatrix);
 
         Vector4 clipCoords;
         clipCoords.X = pos.X * matrix[0] + pos.Y * matrix[4] + pos.Z * matrix[8] + matrix[12];
         clipCoords.Y = pos.X * matrix[1] + pos.Y * matrix[5] + pos.Z * matrix[9] + matrix[13];
-           clipCoords.Z = pos.X * matrix[2] + pos.Y * matrix[6] + pos.Z * matrix[10] + matrix[14];
+        clipCoords.Z = pos.X * matrix[2] + pos.Y * matrix[6] + pos.Z * matrix[10] + matrix[14];
         clipCoords.W = pos.X * matrix[3] + pos.Y * matrix[7] + pos.Z * matrix[11] + matrix[15];
 
         if (clipCoords.W <= 0f)
@@ -143,7 +138,7 @@ public class Renderer : IGameComponent
         System.Numerics.Vector3 M;
         M.X = clipCoords.X / clipCoords.W;
         M.Y = clipCoords.Y / clipCoords.W;
-         M.Z = clipCoords.Z / clipCoords.W;
+        M.Z = clipCoords.Z / clipCoords.W;
 
         screenPos.X = (displayInfo.width / 2f) * (1f + M.X);
         screenPos.Y = displayInfo.height - ((displayInfo.height / 2f) * (1f + M.Y));

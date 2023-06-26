@@ -29,11 +29,10 @@
 
 #endregion
 
-namespace Platform.Data.Events;
-
 using JetBrains.Annotations;
-
 using Serilog;
+
+namespace Ensage.Data.Events;
 
 /// <summary>
 /// The OnUpdate callback should be triggered every tick.

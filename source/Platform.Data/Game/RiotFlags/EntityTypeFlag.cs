@@ -29,26 +29,23 @@
 
 #endregion
 
-namespace Ensage.Data.Utils;
+namespace Ensage.Data.Game.RiotFlags;
 
-/// <summary>
-/// Indicates if the operation was successful.
-/// </summary>
-public enum OperationResult : short
+[Flags]
+public enum EntityTypeFlag : long
 {
-    /// <summary>
-    /// Operation failed
-    /// </summary>
-    FAILURE,
-
-
-    /// <summary>
-    /// Operation is still ongoing or the operation status has not been updated.
-    /// </summary>
-    OPERATIONAL,
-
-    /// <summary>
-    /// Operation was successful
-    /// </summary>
-    SUCCESS,
+    Champion = 7957694998179309635,
+    Special = 30506402751803475,
+    Ward = 5989923982968774999,
+    Minion_Lane = 8944270284747073869,
+    Minion_Lane_Siege = 7306920423476651374,
+    Minion_Lane_Ranged = 7306930284704785774,
+    Minion_Lane_Melee = 7306365152824092014,
+    Minion_Lane_Super = 8243118342183806318,
+    Monster = 2338042707385937741,
+    Monster_Epic = 2340781521963538015,
+    Monster_Dragon = 2336927746459059295,
+    Special_Void = 2340781521963538015,
+    Structure_Turret = 4294967297,
+    UNKNOWN = 5980780305148018688,
 }

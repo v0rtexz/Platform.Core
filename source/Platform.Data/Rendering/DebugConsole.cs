@@ -29,17 +29,14 @@
 
 #endregion
 
-using Platform.Data.Game.Components;
-using Platform.Data.Game.Types;
-
-namespace Platform.Data.Rendering;
-
 using System.Numerics;
-
-using Platform.Data.Game.Components;
-using Platform.Data.Game.Types;
 using System.Reflection;
+using Ensage.Data.Game;
+using Ensage.Data.Game.Components;
+using Ensage.Data.Game.Types;
 using ImGuiNET;
+
+namespace Ensage.Data.Rendering;
 
 /// <summary>
 /// Debug Console to print information about objects.
@@ -64,10 +61,13 @@ internal static class DebugConsole
     {
         bool showConsole = true;
 
+        PrintLocalPlayerData();
+
         ImGui.Begin("Debug Console", ref showConsole);
 
 
-        DrawObjectDropdown();
+        DrawChampionsDropdown();
+        DrawMinionsDropdown();
 
         if (selectedObject != null)
         {
@@ -78,20 +78,34 @@ internal static class DebugConsole
     }
 
     /// <summary>
-    /// Draws a dropdown menu to choose the object to debug.
+    /// Draws a dropdown menu to choose a champion to debug.
     /// </summary>
-    private static void DrawObjectDropdown()
+    private static void DrawChampionsDropdown()
     {
         // Create a list of objects you want to debug
-        List<AIBaseClient> debugObjects = new List<AIBaseClient>();
+        List<AIHeroClient> debugObjects = ComponentController.GetComponent<World>().Heroes.ToList();
 
-        AIHeroClient player = ComponentController.GetComponent<World>().GetLocalPlayer();
-        debugObjects.Add(player);
-
-        string[] objectNames = debugObjects.Select(obj => obj.GetName()).ToArray();
+        string[] objectNames = debugObjects.Select(obj => obj.ChampionName).ToArray();
 
         int selectedIndex = Array.IndexOf(debugObjects.ToArray(), selectedObject);
         if (ImGui.Combo("Select Object", ref selectedIndex, objectNames, objectNames.Length))
+        {
+            selectedObject = debugObjects[selectedIndex];
+        }
+    }
+    
+    /// <summary>
+    /// Draws a dropdown menu to choose a minion to debug.
+    /// </summary>
+    private static void DrawMinionsDropdown()
+    {
+        // Create a list of objects you want to debug
+        List<AIMinionClient> debugObjects = ComponentController.GetComponent<World>().Minions.ToList();
+
+        string[] objectNames = debugObjects.Select(obj => obj.ObjectName).ToArray();
+
+        int selectedIndex = Array.IndexOf(debugObjects.ToArray(), selectedObject);
+        if (ImGui.Combo("Select Minion Object", ref selectedIndex, objectNames, objectNames.Length))
         {
             selectedObject = debugObjects[selectedIndex];
         }
@@ -105,6 +119,8 @@ internal static class DebugConsole
     {
         Type objectType = debugObject.GetType();
         PropertyInfo[] properties = objectType.GetProperties();
+        MethodInfo[] methods = objectType.GetMethods();
+
 
         ImGui.Text("Property Values:");
         foreach (PropertyInfo property in properties)
@@ -116,8 +132,40 @@ internal static class DebugConsole
         ImGui.Separator();
         ImGui.Text("\nFunction results:");
         Vector2 pos = Vector2.Zero;
-        if (ComponentController.GetComponent<Renderer>().WorldToScreen(debugObject.Pos, ref pos))
-            ImGui.Text($"WorldToScreen: {pos}");
+
+        Renderer.WorldToScreen(debugObject.Pos, ref pos);
+        ImGui.Text($"WorldToScreen: {pos}");
+        foreach (MethodInfo method in methods)
+        {
+            if (method.IsSpecialName || method.DeclaringType == typeof(object))
+                continue;
+
+            if (method.GetParameters().Length == 0)
+                ImGui.Text($"{method.Name}: {method.Invoke(debugObject, null)}");
+        }
+    }
+
+    /// <summary>
+    /// Prints all LocalPlayer properties on the screen..
+    /// </summary>
+    /// <param name="debugObject"></param>
+    private static void PrintLocalPlayerData()
+    {
+        AIHeroClient player = ComponentController.GetComponent<World>().GetLocalPlayer();
+
+        Type objectType = player.GetType();
+        PropertyInfo[] properties = objectType.GetProperties();
+
+        Vector2 textPos = new Vector2(100, 100);
+        Vector4 col = new Vector4(255, 255, 255, 255);
+        Drawing.AddText("Propertys:", textPos, col);
+        int i = 10;
+        foreach (PropertyInfo property in properties)
+        {
+            object value = property.GetValue(player);
+            Drawing.AddText($"\n{property.Name}: {value}", new Vector2(textPos.X, textPos.Y + i), col);
+            i += 30;
+        }
     }
 
     #endregion

@@ -29,11 +29,9 @@
 
 #endregion
 
-using Platform.Data.Utils;
+using Ensage.Data.Utils;
 
-namespace Platform.Data.Game.Components;
-
-using Platform.Data.Utils;
+namespace Ensage.Data.Game.Components;
 
 public interface IGameComponent
 {

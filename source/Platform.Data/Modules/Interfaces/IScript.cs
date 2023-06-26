@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace Platform.Data.Modules.Interfaces;
+namespace Ensage.Data.Modules.Interfaces;
 
 /// <summary>
 /// Implemented by every Plugin.

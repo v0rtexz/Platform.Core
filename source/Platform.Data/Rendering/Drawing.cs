@@ -29,12 +29,11 @@
 
 #endregion
 
-using Platform.Data.Game.Components;
-
-namespace Platform.Data.Rendering;
-
 using System.Numerics;
+using Ensage.Data.Game.Components;
 using ImGuiNET;
+
+namespace Ensage.Data.Rendering;
 
 /// <summary>
 /// Class responsible for drawings.
@@ -46,7 +45,9 @@ public static class Drawing
     /// <summary>
     /// Queue which stores all drawing functions that should be called in Present.
     /// </summary>
-    internal static Queue<Action> DrawQueue = new Queue<Action>();
+    internal static Queue<Action> BackBufferDrawQueue = new Queue<Action>();
+    
+    internal static Queue<Action> FrontBufferDrawQueue  = new Queue<Action>();
 
     #endregion
 
@@ -60,7 +61,7 @@ public static class Drawing
     /// <param name="color">The color to draw the circle.</param>
     public static void DrawCircle(Vector2 vec, float radius, uint color)
     {
-        DrawQueue.Enqueue(() => ImGui.GetForegroundDrawList().AddCircle(vec, radius, color));
+        BackBufferDrawQueue.Enqueue(() => ImGui.GetForegroundDrawList().AddCircle(vec, radius, color));
     }
 
     /// <summary>
@@ -72,7 +73,7 @@ public static class Drawing
     /// <param name="thickness">The thickness of the circle.</param>
     public static void Add3DCircle(Vector3 pos, float radius, bool useShader = true, float thickness = 1.2f)
     {
-        DrawQueue.Enqueue(() => Draw3DCircle(pos, radius, useShader, thickness));
+        BackBufferDrawQueue.Enqueue(() => Draw3DCircle(pos, radius, useShader, thickness));
     }
 
     /// <summary>
@@ -82,7 +83,7 @@ public static class Drawing
     /// <param name="radius">Radius of the circle.</param>
     /// <param name="useShader">True if it should be a shader circle.</param>
     /// <param name="thickness">Thickness of the circle's outline.</param>
-    private static void Draw3DCircle(Vector3 pos, float radius, bool useShader = true, float thickness = 1.2f)
+    public static void Draw3DCircle(Vector3 pos, float radius, bool useShader = true, float thickness = 1.2f)
     {
         Vector3 worldPos = pos;
 
@@ -97,7 +98,7 @@ public static class Drawing
             worldPos.X = (float)(pos.X + Math.Cos(angle) * radius);
             worldPos.Z = (float)(pos.Z + Math.Sin(angle) * radius);
 
-            ComponentController.GetComponent<Renderer>().WorldToScreen(worldPos, ref screenPos);
+           Renderer.WorldToScreen(worldPos, ref screenPos);
             drawList.PathLineTo(screenPos);
         }
 
@@ -161,7 +162,7 @@ public static class Drawing
     /// <param name="text">The text to draw.</param>
     /// <param name="pos">The position to draw at.</param>
     /// <param name="color">The color of the text.</param>
-    public static void AddText(string text, Vector2 pos, float scale = 1.0f)
+    public static void AddShaderText(string text, Vector2 pos, float scale = 1.0f)
     {
         var drawList = ImGui.GetForegroundDrawList();
 
@@ -172,6 +173,22 @@ public static class Drawing
 
 
         drawList.AddText(pos, shaderColorU32, text);
+    }
+
+    /// <summary>
+    /// Draws text on a given position.
+    /// </summary>
+    /// <param name="text">The text to draw.</param>
+    /// <param name="pos">The position to draw at.</param>
+    /// <param name="color">The color of the text.</param>
+    public static void AddText(string text, Vector2 pos, Vector4 color, float scale = 1.0f)
+    {
+        var drawList = ImGui.GetForegroundDrawList();
+
+        // Create a shader effect for the text
+        var u32Color = ImGui.ColorConvertFloat4ToU32(color);
+
+        drawList.AddText(pos, u32Color, text);
     }
 
     #endregion

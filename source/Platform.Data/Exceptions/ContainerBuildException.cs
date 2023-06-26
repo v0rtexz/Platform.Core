@@ -29,14 +29,12 @@
 
 #endregion
 
-namespace Platform.Data.Exceptions;
-
-using Platform.Data.Container;
-
 using Autofac;
-
-using Serilog.Events;
+using Ensage.Data.Container;
 using Serilog;
+using Serilog.Events;
+
+namespace Ensage.Data.Exceptions;
 
 public class ContainerBuildException : Exception
 {

@@ -29,25 +29,42 @@
 
 #endregion
 
-namespace Platform.Data.Game.Engine;
-
-using Platform.Data.Game.Components;
-
-using System.Text;
-
+using System.Collections;
+using Ensage.Data.Game.Types;
+using Ensage.Data.Memory;
 using ProcessMemoryUtilities.Managed;
 
-/// <summary>
-/// Utility class to read Riots Strings.
-/// </summary>
-internal class RiotString
-{
-    internal static string Get(long address, int stringSize = 512)
-    {
-        byte[] dataBuffer = new byte[stringSize];
-        Memory.Memory memory = ComponentController.GetComponent<Memory.Memory>();
-        NativeWrapper.ReadProcessMemoryArray(memory.Handle, (IntPtr)address, dataBuffer, 0, dataBuffer.Length);
+namespace Ensage.Data.Game.Components.ManagerTemplates;
 
-        return Encoding.UTF8.GetString(dataBuffer).Split('\0')[0];
+/// <summary>
+/// Responsible for accessing the <see cref="AIHeroClient"/> instance of <see cref="ManagerTemplate"/>.
+/// </summary>
+public class HeroManager : ManagerTemplate, IEnumerable<AIHeroClient>
+{
+    /// <summary>
+    /// Enumerates all Heroes.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator<AIHeroClient> GetEnumerator()
+    {
+        for (int i = 0; i < GetListSize(ManagerTemplateType.Heroes); i++)
+        {
+            long hero = 0;
+            NativeWrapper.ReadProcessMemory(MemoryAccessor.Handle, GetListPtr(ManagerTemplateType.Heroes) + i * 0x8,
+                ref hero);
+
+            AIHeroClient heroInstance = new AIHeroClient(hero);
+
+            yield return heroInstance;
+        }
+    }
+
+    public HeroManager() : base()
+    {
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

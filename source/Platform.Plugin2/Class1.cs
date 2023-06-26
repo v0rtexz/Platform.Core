@@ -1,8 +1,8 @@
-﻿using Platform.Data.Modules.Interfaces;
+﻿using Ensage.Data.Modules.Interfaces;
 using Serilog;
 using Serilog.Events;
 
-namespace Platform.Plugin2
+namespace Ensage.Plugin2
 {
     public class Class1 : IScript
     {

@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace Platform.Data.Events;
+namespace Ensage.Data.Events;
 
 /// <summary>
 /// This Interface should be implemented by all callbacks.

@@ -16,7 +16,8 @@
       "documentPrivateFields": false,
       "documentInternalElements": true,
       "documentExposedElements": true,
-      "documentInterfaces": true
+      "documentInterfaces": true,
+        
     },
     "namingRules": {
       "allowedHungarianPrefixes": [

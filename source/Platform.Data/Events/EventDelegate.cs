@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace Platform.Data.Events;
+namespace Ensage.Data.Events;
 
 // Delegates for all Events.
 public class EventDelegate
