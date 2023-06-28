@@ -29,53 +29,59 @@
 
 #endregion
 
-namespace Ensage.Data.Game.Types;
+namespace Ensage.Data.Game.Types.Buff;
 
-using System.Numerics;
-using Ensage.Data.Game.Types.Spells;
-using Ensage.Data.Utils;
-using JetBrains.Annotations;
+using System.Collections;
 
 /// <summary>
-/// Type for missiles. Inherited by <see cref="AIBaseClient"/>.
+/// Contains information about all spellslots.
 /// </summary>
-public class AIMissileClient : AIBaseClient
+public class BuffManagerEntriesArray : MemoryObject, IEnumerable<BuffEntry>
 {
     #region Properties
-
-    [PublicAPI] public Vector3 StartPosition => GetProperty<Vector3>(Offsets.MissileStartPosition);
-    [PublicAPI] public Vector3 EndPosition => GetProperty<Vector3>(Offsets.MissileEndPosition);
-    [PublicAPI] public string MissileName => GetSpellInfo().GetSpellData().MissileName;
-    [PublicAPI] public string CasterName => GetSpellInfo().GetSpellDetails().CasterName;
-    [PublicAPI] public long CasterNameHash => GetSpellInfo().GetSpellDetails().CasterNameHash;
 
     #endregion
 
     #region Constructors and Destructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AIMissileClient"/> class.
+    /// Initializes a new instance of the <see cref="BuffManager"/> class.
     /// </summary>
-    /// <param name="address">The address of the unit.</param>
-    public AIMissileClient(long address)
-        : base(address)
+    /// <param name="addr">The address of the BuffManager.</param>
+    internal BuffManagerEntriesArray(long addr)
     {
+        base.address = addr;
     }
 
     #endregion
 
     #region Methods
 
-    /// <summary>
-    /// Access the SpellInfo structure.
-    /// </summary>
-    /// <returns>SpellInfo instance.</returns>
-    internal SpellInfo GetSpellInfo()
-    {
-        long ptr = GetProperty<long>(Offsets.MissileSpellInfo);
+    #endregion
 
-        return new SpellInfo(ptr);
+    public IEnumerator<BuffEntry> GetEnumerator()
+    {
+        BuffEntry buffEntry = null;
+
+        long buffManagerEntriesArrayStart = GetProperty<long>(this.address + Offsets.BuffManagerInstance + 0x18, 0x0);
+        long buffManagerEntriesArrayEnd = GetProperty<long>(this.address + Offsets.BuffManagerInstance + 0x20, 0x0);
+
+        for (long i = buffManagerEntriesArrayStart; i != buffManagerEntriesArrayEnd; i += 0x10)
+        {
+            long buffEntryPtr = GetProperty<long>(i, 0x0);
+
+            // I read buffInfo here already to make sure the buff is valid.
+            long buffEntryInfo = GetProperty<long>(buffEntryPtr, 0x10);
+
+            if (buffEntryPtr > 0 && buffEntryInfo > 0)
+            {
+                yield return new BuffEntry(buffEntryPtr);
+            }
+        }
     }
 
-    #endregion
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }

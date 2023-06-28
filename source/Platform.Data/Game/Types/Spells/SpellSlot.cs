@@ -29,34 +29,15 @@
 
 #endregion
 
-using Ensage.Data.Events.Args;
-using JetBrains.Annotations;
-using Serilog;
-
-namespace Ensage.Data.Events;
+namespace Ensage.Data.Game.Types.Spells;
 
 /// <summary>
-/// The OnUpdate callback should be triggered every tick.
+/// All spell slots (Q,W,E,R...)
 /// </summary>
-public class OnUpdate : ICallback
+public enum SpellSlot : short
 {
-    [NotNull] private ILogger logger;
-
-    public OnUpdate(ILogger logger)
-    {
-        this.logger = logger;
-        this.InstantiateCallback();
-    }
-
-    /// <summary>
-    /// Triggered every tick.
-    /// </summary>
-    public void TriggerIfConditionMet()
-    {
-    }
-
-    public void InstantiateCallback()
-    {
-        EventManager.RegisterCallback<EventDelegate.EvtOnUpdate>(() => TriggerIfConditionMet());
-    }
+    Q = 0,
+    W = 1,
+    E = 2,
+    R = 3
 }

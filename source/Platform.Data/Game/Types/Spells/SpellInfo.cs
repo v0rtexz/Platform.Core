@@ -29,34 +29,55 @@
 
 #endregion
 
-using Ensage.Data.Events.Args;
-using JetBrains.Annotations;
-using Serilog;
+using Ensage.Data.Utils;
 
-namespace Ensage.Data.Events;
+namespace Ensage.Data.Game.Types.Spells;
 
 /// <summary>
-/// The OnUpdate callback should be triggered every tick.
+/// SpellInfo class
 /// </summary>
-public class OnUpdate : ICallback
+internal class SpellInfo : MemoryObject
 {
-    [NotNull] private ILogger logger;
+    #region Properties
 
-    public OnUpdate(ILogger logger)
-    {
-        this.logger = logger;
-        this.InstantiateCallback();
-    }
+    internal bool Test => GetProperty<bool>(0x168);
+    internal string SpellName => RiotString.Get(this.address + Offsets.SpellName);
+    internal long SpellNameHash => GetProperty<long>(Offsets.SpellName);
+    
+    #endregion
+
+    #region Constructors and Destructors
 
     /// <summary>
-    /// Triggered every tick.
+    /// Initializes a new instance of the <see cref="SpellInfo"/> class.
     /// </summary>
-    public void TriggerIfConditionMet()
+    /// <param name="address">The address of the structure.</param>
+    internal SpellInfo(long address)
     {
+        this.address = address;
     }
 
-    public void InstantiateCallback()
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Access the <see cref="SpellData"/> structure.
+    /// </summary>
+    /// <returns></returns>
+    internal SpellData GetSpellData()
     {
-        EventManager.RegisterCallback<EventDelegate.EvtOnUpdate>(() => TriggerIfConditionMet());
+        long ptr = GetProperty<long>(Offsets.SpellData);
+
+        return new SpellData(ptr);
     }
+
+    internal SpellDetails GetSpellDetails()
+    {
+        long ptr = GetProperty<long>(Offsets.DetailedMissileInfo);
+
+        return new SpellDetails(ptr);
+    }
+
+    #endregion
 }

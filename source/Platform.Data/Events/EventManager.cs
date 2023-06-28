@@ -29,6 +29,9 @@
 
 #endregion
 
+using Ensage.Data.Events.Args;
+using JetBrains.Annotations;
+
 namespace Ensage.Data.Events;
 
 /// <summary>
@@ -41,8 +44,10 @@ public class EventManager
     /// <summary>
     /// OnUpdate event
     /// </summary>
-    private static event EventDelegate.EvtOnUpdate EvtOnUpdate;
-    
+    private static event EventDelegate.EvtOnUpdate cbOnUpdate;
+
+    private static event EventDelegate.EvtOnProcessSpell cbOnProcessSpell;
+
     #endregion
 
     #region Methods
@@ -51,15 +56,23 @@ public class EventManager
     /// Register a callback to a given event.
     /// </summary>
     /// <param name="subscriber">The function that will be executed when the event is raised.</param>
-    /// <typeparam name="T">The type of the callback.</typeparam>
-    public static void RegisterCallback<T>(Action subscriber)
+    /// <typeparam name="TDelegate">The delegate type to subscribe.</typeparam>
+    public static void RegisterCallback<TDelegate>(TDelegate subscriber)
     {
-        switch (typeof(T))
+        switch (subscriber)
         {
-            case Type t when t == typeof(EventDelegate.EvtOnUpdate):
-                EventDelegate.EvtOnUpdate handler = () => subscriber.Invoke();
-                EvtOnUpdate += handler;
+            case EventDelegate.EvtOnUpdate onUpdate:
+                cbOnUpdate += onUpdate;
                 break;
+
+            case EventDelegate.EvtOnProcessSpell onProcessSpell:
+                cbOnProcessSpell += onProcessSpell;
+                break;
+
+            // Handle other delegate types if needed
+
+            default:
+                throw new ArgumentException("Unsupported delegate type.");
         }
     }
 
@@ -67,16 +80,19 @@ public class EventManager
     /// Invoke the given callback type.
     /// </summary>
     /// <typeparam name="TCallback">The callback type to invoke.</typeparam>
-    public static void InvokeCallback<TCallback>()
+    public static void InvokeCallback<TCallback, TArgs>([CanBeNull] TArgs args = default)
     {
         switch (typeof(TCallback))
         {
             case Type t when t == typeof(EventDelegate.EvtOnUpdate):
-                EvtOnUpdate?.Invoke();
+                cbOnUpdate?.Invoke();
+                break;
+
+            case Type t when t == typeof(EventDelegate.EvtOnProcessSpell):
+                cbOnProcessSpell?.Invoke((OnProcessSpellArgs)(object)args);
                 break;
         }
     }
 
     #endregion
-
 }

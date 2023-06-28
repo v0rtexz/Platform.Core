@@ -29,34 +29,43 @@
 
 #endregion
 
-using Ensage.Data.Events.Args;
-using JetBrains.Annotations;
-using Serilog;
+namespace Ensage.Data.Game.Types.Buff;
 
-namespace Ensage.Data.Events;
+using Ensage.Data.Game.Types.Spells;
+using JetBrains.Annotations;
 
 /// <summary>
-/// The OnUpdate callback should be triggered every tick.
+/// Contains information about all spellslots.
 /// </summary>
-public class OnUpdate : ICallback
+public class BuffManager : MemoryObject
 {
-    [NotNull] private ILogger logger;
+    #region Properties
 
-    public OnUpdate(ILogger logger)
-    {
-        this.logger = logger;
-        this.InstantiateCallback();
-    }
+    #endregion
+
+    #region Constructors and Destructors
 
     /// <summary>
-    /// Triggered every tick.
+    /// Initializes a new instance of the <see cref="BuffManager"/> class.
     /// </summary>
-    public void TriggerIfConditionMet()
+    /// <param name="addr">The address of the BuffManager.</param>
+    internal BuffManager(long addr)
     {
+        base.address = addr;
     }
 
-    public void InstantiateCallback()
+    #endregion
+
+    #region Methods
+
+    internal BuffManagerEntriesArray GetBuffManagerEntries()
     {
-        EventManager.RegisterCallback<EventDelegate.EvtOnUpdate>(() => TriggerIfConditionMet());
+        long buffManagerEntriesArrayStart = GetProperty<long>(0x18);
+
+        BuffManagerEntriesArray buffManagerEntriesArray = new BuffManagerEntriesArray(buffManagerEntriesArrayStart);
+
+        return buffManagerEntriesArray;
     }
+
+    #endregion
 }

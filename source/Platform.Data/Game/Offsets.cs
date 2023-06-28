@@ -38,8 +38,8 @@ public class Offsets
 {
     #region General
 
-    public const int GameTime = 0x51E8C70;
-    public const int LocalPlayer = 0x51F52D0;
+    public const int GameTime = 0x521EE00; // F3 0F 5C 35 ?? ?? ?? ?? 0F 28 F8
+    public const int LocalPlayer = 0x522B768; // 48 8B 3D ?? ?? ?? ?? 48 3B CF
 
     #endregion
 
@@ -50,9 +50,9 @@ public class Offsets
     public const int Mana = 0x340;
     public const int MaxMana = 0x358;
     public const int Armor = 0x16A4;
-    public const int BonusArmor = 0x1680;
-    public const int MagicResist = 0x1684;
-    public const int BonusMagicResist = 0x1688;
+    public const int BonusArmor = 0x16A8;
+    public const int MagicResist = 0x16AC;
+    public const int BonusMagicResist = 0x16B0;
     public const int MovementSpeed = 0x16BC;
     public const int Team = 0x3C;
     public const int Pos = 0x220;
@@ -70,10 +70,10 @@ public class Offsets
     public const int AbilityPenPerc = 0x11C8;
     public const int AbilityHaste = 0x1A00;
     public const int Level = 0x4830;
-    public const int TotalEXP = 0x3FA0;
-    public const int LevelPoints = 0x3FF8;
-    public const int ChampionName = 0x3850;
-    public const int ObjectName = 0x35F0; // seems to hide behind a pointer
+    public const int TotalEXP = 0x3F98;
+    public const int LevelPoints = 0x3FF0;
+    public const int ChampionName = 0x3848;
+    public const int ObjectName = 0x35E8; // seems to hide behind a pointer
     public const int NetworkID = 0xC8;
 
     public const int UnitComponentInfo = 0x3680;
@@ -95,20 +95,84 @@ public class Offsets
 
     #region ManagerTemplates
 
-    public const int HeroList = 0x213DC68;
-    public const int MinionList = 0x3998608;
-    public const int TurretList = 0x51E4D20;
-    public const int MissileMap = 0x51F6CD0;
+    public const int HeroList = 0x2173340; // 48 8B 05 ? ? ? ? 45 33 E4 0F 57 C0
+    public const int MinionList = 0x39CDCE0; // 48 8B 0D ? ? ? ? E8 ? ? ? ? EB 07
+    public const int TurretList = 0x521A3F0; // 48 89 0D ? ? ? ? 33 C9
+    public const int MissileMap = 0x522B828; // 48 8B 0D ? ? ? ? 48 8D 54 24 ? E8 ? ? ? ? 48 8B 7C 24 ?
 
     public const int ManagerTemplateListPtr = 0x8;
     public const int ManagerTemplateSize = 0x10;
 
     #endregion
 
+    #region Missiles
+
+    public const int MissileName = 0x60;
+
+    public const int MissileSpellInfo = 0x2E8;
+
+    public const int MissileStartPosition = 0x38c;
+    public const int MissileEndPosition = 0x398;
+
+    #endregion
+
+    #region SpellBook
+
+    public const int SpellBook = 0x30C8;
+    public const int SpellSlotLevel = 0x28;
+    public const int SpellSlotTime = 0x30;
+    public const int SpellSlotCharges = 0x58;
+    public const int SpellSlotTimeCharge = 0x78;
+    public const int SpellSlotSpellInfo = 0x130;
+
+    #endregion
+
+    #region ActiveSpell
+
+    public const int SpellCast = 0x2A30;
+    public const int SpellCastSpellInfo = 0x8;
+
+    public const int ActiveSpellStartTime = 0x180;
+    public const int ActiveSpellEndTime = 0x168;
+
+    public const int ActiveSpellStartPos = 0xac;
+    public const int ActiveSpellEndPos = 0xb8;
+    public const int ActiveSpellIsAA = 0x110;
+    public const int ActiveSpellIsSpell = 0x114;
+
+    public const int SourceIndex = 0x8c;
+    public const int TargetIndex = 0xe0;
+
+    #endregion
+
+    #region SpellInfo
+
+    public const int SpellName = 0x28;
+
+    public const int
+        DetailedMissileInfo = 0x238; // Missile -> 0x238 | contains caster name and stuff like Particle strings
+
+    public const int CasterName = 0x10;
+
+    #endregion
+
+    #region SpellData
+
+    public const int SpellData = 0x60;
+    public const int SpellDataMissileName = 0x80;
+
+    #endregion
+
+    #region BuffManager
+
+    public const int BuffManagerInstance = 0x27c0;
+
+    #endregion
+
     #region Rendering
 
-    public const int Renderer = 0x523EBC8;
-    public const int ViewMatrix = 0x5236720;
+    public const int Renderer = 0x5274650; // 4C 39 2D ? ? ? ? 74 5C
+    public const int ViewMatrix = 0x526C1B0; // 48 8D 0D ? ? ? ? 0F 10 00
 
     #endregion
 }

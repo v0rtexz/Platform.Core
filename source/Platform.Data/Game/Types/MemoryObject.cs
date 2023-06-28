@@ -31,51 +31,44 @@
 
 namespace Ensage.Data.Game.Types;
 
-using System.Numerics;
-using Ensage.Data.Game.Types.Spells;
-using Ensage.Data.Utils;
-using JetBrains.Annotations;
+using Ensage.Data.Memory;
+using ProcessMemoryUtilities.Managed;
 
 /// <summary>
-/// Type for missiles. Inherited by <see cref="AIBaseClient"/>.
+/// Contains functions to check the validity of memory objects and to make them more easily accessible.
 /// </summary>
-public class AIMissileClient : AIBaseClient
+public abstract class MemoryObject
 {
-    #region Properties
-
-    [PublicAPI] public Vector3 StartPosition => GetProperty<Vector3>(Offsets.MissileStartPosition);
-    [PublicAPI] public Vector3 EndPosition => GetProperty<Vector3>(Offsets.MissileEndPosition);
-    [PublicAPI] public string MissileName => GetSpellInfo().GetSpellData().MissileName;
-    [PublicAPI] public string CasterName => GetSpellInfo().GetSpellDetails().CasterName;
-    [PublicAPI] public long CasterNameHash => GetSpellInfo().GetSpellDetails().CasterNameHash;
-
-    #endregion
-
-    #region Constructors and Destructors
+    protected long address;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AIMissileClient"/> class.
+    /// Read a property out of the objects memory space.
     /// </summary>
-    /// <param name="address">The address of the unit.</param>
-    public AIMissileClient(long address)
-        : base(address)
+    /// <param name="address">The address to read from..</param>
+    /// <param name="offset">The offset to read from.</param>
+    /// <typeparam name="TType">The type of the property.</typeparam>
+    /// <returns>The property value.</returns>
+    protected TType GetProperty<TType>(long address, int offset)
+        where TType : unmanaged
     {
+        TType buffer = default(TType);
+        NativeWrapper.ReadProcessMemory<TType>(MemoryAccessor.Handle, (IntPtr)(address + offset), ref buffer);
+
+        return buffer;
     }
-
-    #endregion
-
-    #region Methods
-
+    
     /// <summary>
-    /// Access the SpellInfo structure.
+    /// Read a property out of the objects memory space.
     /// </summary>
-    /// <returns>SpellInfo instance.</returns>
-    internal SpellInfo GetSpellInfo()
+    /// <param name="offset">The offset to read from.</param>
+    /// <typeparam name="TType">The type of the property.</typeparam>
+    /// <returns>The property value.</returns>
+    protected TType GetProperty<TType>(int offset)
+        where TType : unmanaged
     {
-        long ptr = GetProperty<long>(Offsets.MissileSpellInfo);
+        TType buffer = default(TType);
+        NativeWrapper.ReadProcessMemory<TType>(MemoryAccessor.Handle, (IntPtr)(this.address + offset), ref buffer);
 
-        return new SpellInfo(ptr);
+        return buffer;
     }
-
-    #endregion
 }

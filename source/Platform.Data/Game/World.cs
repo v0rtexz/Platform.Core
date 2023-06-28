@@ -63,7 +63,9 @@ public class World : IGameComponent
     public TurretManager Turrets { get; }
 
     /// <summary>
-    /// Gets all active <see cref="AIMissileClient"/>.
+    /// Gets all active Missiles.
+    /// Key = NetworkID
+    /// Value = Missile
     /// </summary>
     public MissileMap Missiles { get; }
 

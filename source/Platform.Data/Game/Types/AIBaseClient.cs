@@ -32,21 +32,18 @@
 using System.Numerics;
 using Ensage.Data.Game.Components;
 using Ensage.Data.Game.RiotFlags;
-using Ensage.Data.Memory;
+using Ensage.Data.Game.Types.Buff;
 using Ensage.Data.Utils;
 using JetBrains.Annotations;
-using ProcessMemoryUtilities.Managed;
 
 namespace Ensage.Data.Game.Types;
 
 /// <summary>
 /// Represents all GameObjects.
 /// </summary>
-public abstract class AIBaseClient
+public abstract class AIBaseClient : MemoryObject
 {
     #region Properties
-
-    public long address;
 
     [PublicAPI] public float Health => GetProperty<float>(Offsets.Health);
 
@@ -90,6 +87,7 @@ public abstract class AIBaseClient
     [PublicAPI] public float BoundingRadius => GetBoundingRadius();
     [PublicAPI] public int Level => GetProperty<int>(Offsets.Level);
     [PublicAPI] public EntityTypeFlag ObjectFlag => GetObjectTypeFlag();
+    [PublicAPI] public BuffManagerEntriesArray Buffs => GetBuffManager();
     [PublicAPI] public string ObjectName => GetObjectName();
     [PublicAPI] public long HashedName => GetNameHash();
     [PublicAPI] public long NetworkID => GetProperty<long>(Offsets.NetworkID);
@@ -113,21 +111,6 @@ public abstract class AIBaseClient
     #endregion
 
     #region Methods
-
-    /// <summary>
-    /// Read a property out of the objects memory space.
-    /// </summary>
-    /// <param name="offset">The offset to read from.</param>
-    /// <typeparam name="TType">The type of the property.</typeparam>
-    /// <returns>The property value.</returns>
-    protected TType GetProperty<TType>(int offset)
-        where TType : unmanaged
-    {
-        TType buffer = default(TType);
-        NativeWrapper.ReadProcessMemory<TType>(MemoryAccessor.Handle, (IntPtr)(this.address + offset), ref buffer);
-
-        return buffer;
-    }
 
     /// <summary>
     /// Get the position transformed into the screen position.
@@ -215,22 +198,6 @@ public abstract class AIBaseClient
     }
 
     /// <summary>
-    /// Read a property out of the objects memory space.
-    /// </summary>
-    /// <param name="address">The address to read from..</param>
-    /// <param name="offset">The offset to read from.</param>
-    /// <typeparam name="TType">The type of the property.</typeparam>
-    /// <returns>The property value.</returns>
-    protected TType GetProperty<TType>(long address, int offset)
-        where TType : unmanaged
-    {
-        TType buffer = default(TType);
-        NativeWrapper.ReadProcessMemory<TType>(MemoryAccessor.Handle, (IntPtr)(address + offset), ref buffer);
-
-        return buffer;
-    }
-
-    /// <summary>
     /// Get the name of the object.
     /// </summary>
     /// <returns>The name of the object.</returns>
@@ -315,6 +282,11 @@ public abstract class AIBaseClient
         }
 
         return (EntityTypeFlag)hash;
+    }
+
+    private BuffManagerEntriesArray GetBuffManager()
+    {
+        return new BuffManagerEntriesArray(this.address);
     }
 
     #endregion

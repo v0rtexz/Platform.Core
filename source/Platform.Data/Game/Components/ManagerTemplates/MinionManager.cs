@@ -59,11 +59,7 @@ public class MinionManager : ManagerTemplate, IEnumerable<AIMinionClient>
             yield return minion;
         }
     }
-
-    public MinionManager() : base()
-    {
-    }
-
+    
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();

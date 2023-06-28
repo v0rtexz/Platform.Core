@@ -46,8 +46,8 @@ public static class Drawing
     /// Queue which stores all drawing functions that should be called in Present.
     /// </summary>
     internal static Queue<Action> BackBufferDrawQueue = new Queue<Action>();
-    
-    internal static Queue<Action> FrontBufferDrawQueue  = new Queue<Action>();
+
+    internal static Queue<Action> FrontBufferDrawQueue = new Queue<Action>();
 
     #endregion
 
@@ -98,7 +98,7 @@ public static class Drawing
             worldPos.X = (float)(pos.X + Math.Cos(angle) * radius);
             worldPos.Z = (float)(pos.Z + Math.Sin(angle) * radius);
 
-           Renderer.WorldToScreen(worldPos, ref screenPos);
+            Renderer.WorldToScreen(worldPos, ref screenPos);
             drawList.PathLineTo(screenPos);
         }
 

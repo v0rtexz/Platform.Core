@@ -29,37 +29,32 @@
 
 #endregion
 
-namespace Ensage.Data.Game.Types;
+namespace Ensage.Data.Game.Types.Buff;
 
-using System.Numerics;
-using Ensage.Data.Game.Types.Spells;
-using Ensage.Data.Utils;
 using JetBrains.Annotations;
 
 /// <summary>
-/// Type for missiles. Inherited by <see cref="AIBaseClient"/>.
+/// Contains information about all spellslots.
 /// </summary>
-public class AIMissileClient : AIBaseClient
+public class BuffEntry : MemoryObject
 {
     #region Properties
 
-    [PublicAPI] public Vector3 StartPosition => GetProperty<Vector3>(Offsets.MissileStartPosition);
-    [PublicAPI] public Vector3 EndPosition => GetProperty<Vector3>(Offsets.MissileEndPosition);
-    [PublicAPI] public string MissileName => GetSpellInfo().GetSpellData().MissileName;
-    [PublicAPI] public string CasterName => GetSpellInfo().GetSpellDetails().CasterName;
-    [PublicAPI] public long CasterNameHash => GetSpellInfo().GetSpellDetails().CasterNameHash;
+    [PublicAPI] public float StartTime => GetBuffStartTime();
+    [PublicAPI] public int BuffType => GetBuffType();
+    [PublicAPI] public string Name => GetBuffInfo().Name;
 
     #endregion
 
     #region Constructors and Destructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AIMissileClient"/> class.
+    /// Initializes a new instance of the <see cref="BuffManager"/> class.
     /// </summary>
-    /// <param name="address">The address of the unit.</param>
-    public AIMissileClient(long address)
-        : base(address)
+    /// <param name="addr">The address of the BuffManager.</param>
+    internal BuffEntry(long addr)
     {
+        base.address = addr;
     }
 
     #endregion
@@ -67,14 +62,34 @@ public class AIMissileClient : AIBaseClient
     #region Methods
 
     /// <summary>
-    /// Access the SpellInfo structure.
+    /// BuffInfo is more detailed and deeper structure to gain more information about the buff.
     /// </summary>
-    /// <returns>SpellInfo instance.</returns>
-    internal SpellInfo GetSpellInfo()
+    /// <returns>The BuffInfo instance.</returns>
+    private BuffInfo GetBuffInfo()
     {
-        long ptr = GetProperty<long>(Offsets.MissileSpellInfo);
+        long ptr = GetProperty<long>(0x10);
 
-        return new SpellInfo(ptr);
+        BuffInfo buffInfoInstance = new BuffInfo(ptr);
+
+        return buffInfoInstance;
+    }
+
+    /// <summary>
+    /// Get the start time of the buff.
+    /// </summary>
+    /// <returns>The start time of the buff.</returns>
+    private float GetBuffStartTime()
+    {
+        return GetProperty<float>(0x18);
+    }
+
+    /// <summary>
+    /// Get the type of the buff.
+    /// </summary>
+    /// <returns>The buff type.</returns>
+    private int GetBuffType()
+    {
+        return GetProperty<int>(0x8);
     }
 
     #endregion

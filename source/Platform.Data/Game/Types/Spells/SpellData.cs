@@ -29,34 +29,33 @@
 
 #endregion
 
-using Ensage.Data.Events.Args;
+using Ensage.Data.Utils;
 using JetBrains.Annotations;
-using Serilog;
 
-namespace Ensage.Data.Events;
+namespace Ensage.Data.Game.Types.Spells;
 
 /// <summary>
-/// The OnUpdate callback should be triggered every tick.
+/// Contains more detailed information about a spell object.
 /// </summary>
-public class OnUpdate : ICallback
+public class SpellData : MemoryObject
 {
-    [NotNull] private ILogger logger;
+    #region Properties
 
-    public OnUpdate(ILogger logger)
+    [PublicAPI] public string MissileName => RiotString.GetByPtr(this.address + Offsets.SpellDataMissileName);
+    [PublicAPI] public bool Test => GetProperty<bool>(0x3e4);
+
+    #endregion
+
+    #region Constructors and Destructors
+
+    public SpellData(long address)
     {
-        this.logger = logger;
-        this.InstantiateCallback();
+        base.address = address;
     }
 
-    /// <summary>
-    /// Triggered every tick.
-    /// </summary>
-    public void TriggerIfConditionMet()
-    {
-    }
+    #endregion
 
-    public void InstantiateCallback()
-    {
-        EventManager.RegisterCallback<EventDelegate.EvtOnUpdate>(() => TriggerIfConditionMet());
-    }
+    #region Methods
+
+    #endregion
 }

@@ -29,6 +29,8 @@
 
 #endregion
 
+using Ensage.Data.Events.Args;
+
 namespace Ensage.Data.Events;
 
 // Delegates for all Events.
@@ -43,4 +45,6 @@ public class EventDelegate
     /// Triggered every Tick.
     /// </summary>
     public delegate void EvtOnUpdate();
+
+    public delegate void EvtOnProcessSpell(OnProcessSpellArgs args);
 }

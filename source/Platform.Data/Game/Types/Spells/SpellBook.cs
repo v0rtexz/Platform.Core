@@ -29,34 +29,49 @@
 
 #endregion
 
-using Ensage.Data.Events.Args;
 using JetBrains.Annotations;
-using Serilog;
 
-namespace Ensage.Data.Events;
+namespace Ensage.Data.Game.Types.Spells;
 
 /// <summary>
-/// The OnUpdate callback should be triggered every tick.
+/// Contains information about all spellslots.
 /// </summary>
-public class OnUpdate : ICallback
+public class SpellBook : MemoryObject
 {
-    [NotNull] private ILogger logger;
+    #region Properties
 
-    public OnUpdate(ILogger logger)
-    {
-        this.logger = logger;
-        this.InstantiateCallback();
-    }
+    [PublicAPI] public int Level => GetProperty<int>(Offsets.SpellSlotLevel);
+    [PublicAPI] public int Charges => GetProperty<int>(Offsets.SpellSlotCharges);
+    [PublicAPI] public float ReadTime => GetProperty<float>(Offsets.SpellSlotTime);
+    [PublicAPI] public float TimeCharge => GetProperty<float>(Offsets.SpellSlotTimeCharge);
+
+    #endregion
+
+    #region Constructors and Destructors
 
     /// <summary>
-    /// Triggered every tick.
+    /// Initializes a new instance of the <see cref="SpellBook"/> class.
     /// </summary>
-    public void TriggerIfConditionMet()
+    /// <param name="addr">The address of the spellbook.</param>
+    internal SpellBook(long addr)
     {
+        base.address = addr;
     }
 
-    public void InstantiateCallback()
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Access the SpellInfo structure.
+    /// </summary>
+    /// <returns>SpellInfo instance.</returns>
+    internal SpellInfo GetSpellInfo()
     {
-        EventManager.RegisterCallback<EventDelegate.EvtOnUpdate>(() => TriggerIfConditionMet());
+        long ptr = GetProperty<long>(Offsets.SpellSlotSpellInfo);
+
+        return new SpellInfo(ptr);
     }
+
+    #endregion
 }

@@ -38,7 +38,7 @@ using Serilog;
 
 namespace Ensage.Data.Game.Components;
 
-public class MissileMap : IEnumerable<AIMissileClient>
+public class MissileMap : IEnumerable<KeyValuePair<long, AIMissileClient>>
 {
     #region Properties
 
@@ -89,6 +89,11 @@ public class MissileMap : IEnumerable<AIMissileClient>
         return missileMap;
     }
 
+    /// <summary>
+    /// Get the key of the pair.
+    /// </summary>
+    /// <param name="entryPtr">The memory address of the Map.</param>
+    /// <returns>The NetworkID of the missile.</returns>
     private long GetKey(long entryPtr)
     {
         long networkID = 0;
@@ -97,64 +102,38 @@ public class MissileMap : IEnumerable<AIMissileClient>
         return networkID;
     }
 
+    /// <summary>
+    /// Get the value of the pair.
+    /// </summary>
+    /// <param name="entryPtr">The memory address of the map.</param>
+    /// <param name="result">The location where the result should be stored at.</param>
+    /// <returns>The Missile.</returns>
     private bool GetValue(long entryPtr, ref long result)
     {
         NativeWrapper.ReadProcessMemory<long>(MemoryAccessor.Handle, (IntPtr)(entryPtr + 0x28), ref result);
         return result != 0;
     }
 
-    public Dictionary<long, AIMissileClient> GetMap()
+    public IEnumerator<KeyValuePair<long, AIMissileClient>> GetEnumerator()
     {
-        Dictionary<long, AIMissileClient> missileMap = new Dictionary<long, AIMissileClient>();
-
         for (int i = 0; i < GetSize(); i++)
         {
             long entryPtr = 0;
 
-            //Get the missile map entrys
+            // Get the missile map entries
             NativeWrapper.ReadProcessMemory<long>(MemoryAccessor.Handle, (IntPtr)(GetMissileMap() + i * 0x8),
                 ref entryPtr);
 
             long key = GetKey(entryPtr);
-            AIMissileClient possibleDuplicate;
-
-
-            // See if key already exists, if it does don't add into map
-            if (missileMap.TryGetValue(key, out possibleDuplicate))
-                continue;
 
             long value = 0;
-            GetValue(entryPtr, ref value);
+
+            if (!GetValue(entryPtr, ref value))
+                continue;
 
             AIMissileClient missile = new AIMissileClient(value);
 
-            missileMap.Add(key, missile);
-        }
-
-        return missileMap;
-    }
-
-    public IEnumerator<AIMissileClient> GetEnumerator()
-    {
-        for (int i = 0; i < GetSize(); i++)
-        {
-            long entryPtr = 0;
-
-            //Get the missile map entrys
-            NativeWrapper.ReadProcessMemory<long>(MemoryAccessor.Handle, (IntPtr)(GetMissileMap() + 0x8),
-                ref entryPtr);
-
-            long entry = 0;
-
-            // Access the Entry (map with <networkID,MissileObject>)
-            NativeWrapper.ReadProcessMemory<long>(MemoryAccessor.Handle, (IntPtr)(entryPtr + i * 0x8),
-                ref entry);
-
-            long value = 0;
-
-            GetValue(entryPtr, ref value);
-
-            yield return new AIMissileClient(value);
+            yield return new KeyValuePair<long, AIMissileClient>(key, missile);
         }
     }
 

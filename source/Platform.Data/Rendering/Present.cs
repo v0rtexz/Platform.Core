@@ -29,6 +29,10 @@
 
 #endregion
 
+using SDL2;
+
+namespace Ensage.Data.Rendering;
+
 using System.Diagnostics;
 using System.Numerics;
 using Ensage.Data.Events;
@@ -37,8 +41,6 @@ using Ensage.Data.Game.Components;
 using ImGuiNET;
 using ImGuiScene;
 using JetBrains.Annotations;
-
-namespace Ensage.Data.Rendering;
 
 /// <summary>
 /// Implements the <see cref="Overlay"/> class and creates a overlay window.
@@ -83,38 +85,22 @@ internal class Present
     void OnPresent()
     {
         // Create a Stopwatch to measure the rendering time
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
+        //   Stopwatch stopwatch = new Stopwatch();
+        //    stopwatch.Start();
 
-        foreach (var player in world.Missiles.GetMap())
-        {
-            if (player.Value.Pos.Length() <= 0)
-                continue;
-
-            Drawing.Add3DCircle(player.Value.Pos, 50f, false, 1.5f);
-
-            Vector2 screenPos = Vector2.Zero;
-            Renderer.WorldToScreen(player.Value.Pos, ref screenPos);
-
-            string opAFText = "LeagueSharp (SoonTM, OP af, spinning to victory GGWP EZ)";
-            Vector2 screenSize = ImGui.GetIO().DisplaySize;
-            float textWidth = ImGui.CalcTextSize(opAFText).X;
-            Vector2 textPos = new Vector2((screenSize.X - textWidth) / 2, 20);
-            Drawing.AddShaderText(opAFText, textPos, 1.5f);
-        }
 
         foreach (var player in world.Heroes)
         {
-            Drawing.Add3DCircle(player.Pos, player.AttackRange + 65f);
+            //   Console.WriteLine(player.GetActiveSpell().StartPosition.Length());
+            Drawing.Add3DCircle(player.Pos, player.AttackRange + 65f, false, 1.2f);
         }
 
         engine.Renderer.Update();
-        EventManager.InvokeCallback<EventDelegate.EvtOnUpdate>();
+        EventManager.InvokeCallback<EventDelegate.EvtOnUpdate, EventArgs>();
 
         // Swap the buffers
-        var tempBuffer = Drawing.FrontBufferDrawQueue;
-        Drawing.FrontBufferDrawQueue = Drawing.BackBufferDrawQueue;
-        Drawing.BackBufferDrawQueue = tempBuffer;
+        (Drawing.FrontBufferDrawQueue, Drawing.BackBufferDrawQueue) =
+            (Drawing.BackBufferDrawQueue, Drawing.FrontBufferDrawQueue);
         Drawing.BackBufferDrawQueue.Clear();
 
         // Render the content from the front buffer
@@ -124,12 +110,12 @@ internal class Present
             drawing.Invoke();
         }
 
-        DebugConsole.Draw();
+        //    DebugConsole.Draw();
         RenderMainMenu();
 
         // Stop the Stopwatch and output the rendering time
-        stopwatch.Stop();
-        TimeSpan elapsed = stopwatch.Elapsed;
+        //    stopwatch.Stop();
+        //    TimeSpan elapsed = stopwatch.Elapsed;
 
         // Console.WriteLine("Rendering time: " + elapsed.TotalMilliseconds + " ms");
     }
@@ -140,8 +126,8 @@ internal class Present
         {
             Setup();
             scene.OnBuildUI += OnPresent;
-            scene.FramerateLimit = new FramerateLimit(FramerateLimit.LimitType.Unbounded, 300);
 
+            scene.FramerateLimit = new FramerateLimit(FramerateLimit.LimitType.Unbounded, 90);
             scene.Run();
         }
     }

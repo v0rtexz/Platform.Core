@@ -31,6 +31,7 @@
 
 using Autofac;
 using Ensage.Data.Events;
+using Ensage.Data.Events.Args;
 using Ensage.Data.Game;
 using Ensage.Data.Game.Components;
 using Ensage.Data.Game.Components.ManagerTemplates;
@@ -171,7 +172,8 @@ public class CoreContainer
     private static void RegisterCallbacks()
     {
         logger.Debug("Registering Callbacks...");
-        ComponentController.RegisterComponent<OnUpdate>();
+        ComponentController.RegisterComponent<OnUpdate>(true, true, true);
+        ComponentController.RegisterComponent<OnProcessSpell>(true, true, true);
     }
 
     #endregion

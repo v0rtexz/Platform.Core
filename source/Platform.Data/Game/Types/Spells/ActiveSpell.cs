@@ -29,37 +29,38 @@
 
 #endregion
 
-namespace Ensage.Data.Game.Types;
-
 using System.Numerics;
-using Ensage.Data.Game.Types.Spells;
-using Ensage.Data.Utils;
 using JetBrains.Annotations;
 
+namespace Ensage.Data.Game.Types.Spells;
+
 /// <summary>
-/// Type for missiles. Inherited by <see cref="AIBaseClient"/>.
+/// Contains information about all spellslots.
 /// </summary>
-public class AIMissileClient : AIBaseClient
+public class ActiveSpell : MemoryObject
 {
     #region Properties
 
-    [PublicAPI] public Vector3 StartPosition => GetProperty<Vector3>(Offsets.MissileStartPosition);
-    [PublicAPI] public Vector3 EndPosition => GetProperty<Vector3>(Offsets.MissileEndPosition);
-    [PublicAPI] public string MissileName => GetSpellInfo().GetSpellData().MissileName;
-    [PublicAPI] public string CasterName => GetSpellInfo().GetSpellDetails().CasterName;
-    [PublicAPI] public long CasterNameHash => GetSpellInfo().GetSpellDetails().CasterNameHash;
+    [PublicAPI] public float StartTime => GetProperty<float>(Offsets.ActiveSpellStartTime);
+    [PublicAPI] public float EndTime => GetProperty<float>(Offsets.ActiveSpellEndTime);
+    [PublicAPI] public Vector3 StartPosition => GetProperty<Vector3>(Offsets.ActiveSpellStartPos);
+    [PublicAPI] public Vector3 EndPositiion => GetProperty<Vector3>(Offsets.ActiveSpellEndPos);
+    [PublicAPI] public bool IsAutoAttack => GetProperty<bool>(Offsets.ActiveSpellIsAA);
+    [PublicAPI] public bool IsSpell => GetProperty<bool>(Offsets.ActiveSpellIsSpell);
+    [PublicAPI] public short SourceIndex => GetProperty<short>(Offsets.SourceIndex);
+    [PublicAPI] public short TargetIndex => GetProperty<short>(Offsets.TargetIndex);
 
     #endregion
 
     #region Constructors and Destructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AIMissileClient"/> class.
+    /// Initializes a new instance of the <see cref="SpellBook"/> class.
     /// </summary>
-    /// <param name="address">The address of the unit.</param>
-    public AIMissileClient(long address)
-        : base(address)
+    /// <param name="addr">The address of the spellbook.</param>
+    internal ActiveSpell(long addr)
     {
+        base.address = addr;
     }
 
     #endregion
@@ -72,7 +73,7 @@ public class AIMissileClient : AIBaseClient
     /// <returns>SpellInfo instance.</returns>
     internal SpellInfo GetSpellInfo()
     {
-        long ptr = GetProperty<long>(Offsets.MissileSpellInfo);
+        long ptr = GetProperty<long>(Offsets.SpellCastSpellInfo);
 
         return new SpellInfo(ptr);
     }
