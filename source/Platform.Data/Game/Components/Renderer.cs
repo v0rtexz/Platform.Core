@@ -102,7 +102,7 @@ public class Renderer : IGameComponent
     /// <summary>
     /// Update the renderer values
     /// </summary>
-    internal void Update()
+    public static void Update()
     {
         NativeWrapper.ReadProcessMemory<Matrix>(MemoryAccessor.Handle,
             (IntPtr)(MemoryAccessor.BaseAddress + Offsets.ViewMatrix), ref viewMatrix);

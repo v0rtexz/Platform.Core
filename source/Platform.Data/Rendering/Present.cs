@@ -29,6 +29,7 @@
 
 #endregion
 
+using GameOverlay.Drawing;
 using SDL2;
 
 namespace Ensage.Data.Rendering;
@@ -61,7 +62,76 @@ internal class Present
         this.world = world ?? throw new ArgumentNullException(nameof(world));
         this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 
-        Task.Run(() => { Render(); });
+        GameOverlay.TimerService.EnableHighPrecisionTimers();
+        Task.Factory.StartNew(() => Graphic.Init());
+
+        while (!Graphic.IsReady)
+            Thread.Sleep(1);
+
+        Render();
+    }
+
+    Task Render()
+    {
+        var uiScene = SimpleImGuiScene.CreateOverlay(RendererFactory.RendererBackend.DirectX11);
+
+        Setup();
+        uiScene.OnBuildUI += OnPresent;
+
+        uiScene.FramerateLimit = new FramerateLimit(FramerateLimit.LimitType.Unbounded, 90);
+
+
+        while (true)
+        {
+            uiScene.Update();
+
+            Renderer.Update();
+
+            // Render the frame
+            Graphic.Draw.BeginScene();
+            Graphic.Draw.ClearScene(Graphic.Brushes["background"]);
+
+            Vector2 playerPos = Vector2.Zero;
+            Renderer.WorldToScreen(world.GetLocalPlayer().Pos, ref playerPos);
+
+            Graphic.Draw.DrawShaderLine(playerPos, playerPos + new Vector2(500, 500));
+            foreach (var player in world.Heroes)
+            {
+                Drawing.Add3DCircle(player.Pos, player.AttackRange + 65f, false, 1.2f);
+            }
+
+            Task.Run(() =>
+            {
+                EventManager.InvokeCallback<EventDelegate.EvtOnUpdate, EventArgs>();
+            }); // Wait for the task to complete (optional)
+
+
+            // Swap the buffers
+            (Drawing.FrontBufferDrawQueue, Drawing.BackBufferDrawQueue) =
+                (Drawing.BackBufferDrawQueue, Drawing.FrontBufferDrawQueue);
+            Drawing.BackBufferDrawQueue.Clear();
+
+            // Render the content from the front buffer
+            while (Drawing.FrontBufferDrawQueue.Count > 0)
+            {
+                var drawing = Drawing.FrontBufferDrawQueue.Dequeue();
+                drawing.Invoke();
+            }
+
+            Graphic.Draw.EndScene();
+        }
+    }
+
+    public void RenderUI()
+    {
+        using (var scene = SimpleImGuiScene.CreateOverlay(RendererFactory.RendererBackend.DirectX11))
+        {
+            Setup();
+            scene.OnBuildUI += OnPresent;
+
+            scene.FramerateLimit = new FramerateLimit(FramerateLimit.LimitType.Unbounded, 90);
+            scene.Run();
+        }
     }
 
     /// <summary>
@@ -84,55 +154,6 @@ internal class Present
 
     void OnPresent()
     {
-        // Create a Stopwatch to measure the rendering time
-        //   Stopwatch stopwatch = new Stopwatch();
-        //    stopwatch.Start();
-
-
-        foreach (var player in world.Heroes)
-        {
-            //   Console.WriteLine(player.GetActiveSpell().StartPosition.Length());
-            Drawing.Add3DCircle(player.Pos, player.AttackRange + 65f, false, 1.2f);
-        }
-
-        engine.Renderer.Update();
-        EventManager.InvokeCallback<EventDelegate.EvtOnUpdate, EventArgs>();
-
-        // Swap the buffers
-        (Drawing.FrontBufferDrawQueue, Drawing.BackBufferDrawQueue) =
-            (Drawing.BackBufferDrawQueue, Drawing.FrontBufferDrawQueue);
-        Drawing.BackBufferDrawQueue.Clear();
-
-        // Render the content from the front buffer
-        while (Drawing.FrontBufferDrawQueue.Count > 0)
-        {
-            var drawing = Drawing.FrontBufferDrawQueue.Dequeue();
-            drawing.Invoke();
-        }
-
-        //    DebugConsole.Draw();
-        RenderMainMenu();
-
-        // Stop the Stopwatch and output the rendering time
-        //    stopwatch.Stop();
-        //    TimeSpan elapsed = stopwatch.Elapsed;
-
-        // Console.WriteLine("Rendering time: " + elapsed.TotalMilliseconds + " ms");
-    }
-
-    private void Render()
-    {
-        using (var scene = SimpleImGuiScene.CreateOverlay(RendererFactory.RendererBackend.DirectX11))
-        {
-            Setup();
-            scene.OnBuildUI += OnPresent;
-
-            scene.FramerateLimit = new FramerateLimit(FramerateLimit.LimitType.Unbounded, 90);
-            scene.Run();
-        }
-    }
-
-    public unsafe void RenderMainMenu()
-    {
+        DebugConsole.Draw();
     }
 }

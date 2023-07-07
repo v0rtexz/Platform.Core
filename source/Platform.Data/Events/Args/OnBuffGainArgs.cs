@@ -29,34 +29,48 @@
 
 #endregion
 
-namespace Ensage.Data.Game.Types.Buff;
-
-using Ensage.Data.Game.Types.Spells;
+using System.Numerics;
+using Ensage.Data.Game.Types;
 using JetBrains.Annotations;
 
-/// <summary>
-/// Contains information about all spellslots.
-/// </summary>
-public class BuffManager : MemoryObject
+namespace Ensage.Data.Events.Args;
+
+[PublicAPI]
+public struct OnBuffGainArgs
 {
-    #region Properties
+    public string Name { get; set; }
+    public string CasterName { get; set; }
+    public AIBaseClient Caster { get; set; }
+    public long CasterHash { get; set; }
+    public long NetworkID { get; set; }
+    public float StartTime { get; set; }
+    public bool IsAutoAttack { get; set; }
+    public bool IsSpell { get; set; }
+    public Vector3 StartPosition { get; set; }
+    public Vector3 EndPosition { get; set; }
 
-    #endregion
 
-    #region Constructors and Destructors
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="BuffManager"/> class.
-    /// </summary>
-    /// <param name="addr">The address of the BuffManager.</param>
-    internal BuffManager(long addr)
+    internal OnBuffGainArgs
+    (
+        string name,
+        string casterName,
+        long casterHash,
+        long networkId,
+        Vector3 startPosition,
+        Vector3 endPosition,
+        float startTime,
+        bool isAutoAttack,
+        bool isSpell
+    )
     {
-        base.address = addr;
+        this.Name = name;
+        this.CasterName = casterName;
+        this.CasterHash = casterHash;
+        this.NetworkID = networkId;
+        this.StartPosition = startPosition;
+        this.EndPosition = endPosition;
+        this.StartTime = startTime;
+        this.IsAutoAttack = isAutoAttack;
+        this.IsSpell = isSpell;
     }
-
-    #endregion
-
-    #region Methods
-
-    #endregion
 }

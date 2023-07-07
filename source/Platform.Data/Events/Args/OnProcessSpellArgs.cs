@@ -48,7 +48,8 @@ public struct OnProcessSpellArgs
     public bool IsSpell { get; set; }
     public Vector3 StartPosition { get; set; }
     public Vector3 EndPosition { get; set; }
-
+    
+    
     internal OnProcessSpellArgs
     (
         string name,

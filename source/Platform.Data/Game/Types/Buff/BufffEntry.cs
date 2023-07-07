@@ -29,6 +29,9 @@
 
 #endregion
 
+using Ensage.Data.Memory;
+using ProcessMemoryUtilities.Managed;
+
 namespace Ensage.Data.Game.Types.Buff;
 
 using JetBrains.Annotations;
@@ -40,9 +43,11 @@ public class BuffEntry : MemoryObject
 {
     #region Properties
 
-    [PublicAPI] public float StartTime => GetBuffStartTime();
-    [PublicAPI] public int BuffType => GetBuffType();
+    [PublicAPI] public float StartTime => GetProperty<float>(Offsets.BuffStartTime);
+    [PublicAPI] public float EndTime => GetProperty<float>(Offsets.BuffEndTime);
+    [PublicAPI] public short BuffType => GetProperty<short>(Offsets.BuffType);
     [PublicAPI] public string Name => GetBuffInfo().Name;
+    [PublicAPI] public long HashedName => GetBuffInfo().HashedName;
 
     #endregion
 
@@ -75,21 +80,16 @@ public class BuffEntry : MemoryObject
     }
 
     /// <summary>
-    /// Get the start time of the buff.
+    /// Checks if a buff is alive by using the current game time and the buffs endtime.
     /// </summary>
-    /// <returns>The start time of the buff.</returns>
-    private float GetBuffStartTime()
+    /// <returns>True if the buff is still alive.</returns>
+    public bool IsAlive()
     {
-        return GetProperty<float>(0x18);
-    }
+        float gametime = 0f;
+        NativeWrapper.ReadProcessMemory<float>(MemoryAccessor.Handle, MemoryAccessor.BaseAddress + Offsets.GameTime,
+            ref gametime);
 
-    /// <summary>
-    /// Get the type of the buff.
-    /// </summary>
-    /// <returns>The buff type.</returns>
-    private int GetBuffType()
-    {
-        return GetProperty<int>(0x8);
+        return gametime < EndTime;
     }
 
     #endregion

@@ -39,8 +39,6 @@ namespace Ensage.Data.Game.Types.Spells;
 internal class SpellInfo : MemoryObject
 {
     #region Properties
-
-    internal bool Test => GetProperty<bool>(0x168);
     internal string SpellName => RiotString.Get(this.address + Offsets.SpellName);
     internal long SpellNameHash => GetProperty<long>(Offsets.SpellName);
     

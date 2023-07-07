@@ -53,13 +53,13 @@ namespace Ensage.Plugin
             Vector2 screenPos = Vector2.Zero;
             Renderer.WorldToScreen(player.Pos, ref screenPos);
 
-            Drawing.AddShaderText(player.ObjectName.ToUpper(), screenPos, 1.5f);
+           // Drawing.AddShaderText(player.ObjectName.ToUpper(), screenPos, 1.5f);
 
             string opAFText = "LeagueSharp (SoonTM, OP af, spinning to victory GGWP EZ)";
             Vector2 screenSize = ImGui.GetIO().DisplaySize;
             float textWidth = ImGui.CalcTextSize(opAFText).X;
             Vector2 textPos = new Vector2((screenSize.X - textWidth) / 2, 20);
-            Drawing.AddShaderText(opAFText, textPos, 1.5f);
+           // Drawing.AddShaderText(opAFText, textPos, 1.5f);
         }
     }
 }

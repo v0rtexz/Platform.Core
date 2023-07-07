@@ -88,8 +88,8 @@ public class CoreContainer
         containerBuilder = new ContainerBuilder();
 
         // Register the Logger
-        containerBuilder.RegisterType<Utils.Logger>().As<ILogger>().SingleInstance();
-        containerBuilder.RegisterType<Memory.ModuleManager>().As<Memory.ModuleManager>().SingleInstance()
+        containerBuilder.RegisterType<Logger>().As<ILogger>().SingleInstance();
+        containerBuilder.RegisterType<ModuleManager>().As<ModuleManager>().SingleInstance()
             .AutoActivate();
 
         // Register callback types to the builder
@@ -155,15 +155,15 @@ public class CoreContainer
     private static void RegisterGameComponents()
     {
         logger.Debug("Registering Game Components...");
-        ComponentController.RegisterComponent<World>();
-        ComponentController.RegisterComponent<Engine>();
+        ComponentController.RegisterComponent<World>(true, true, true);
+        ComponentController.RegisterComponent<Engine>(true, true, true);
         ComponentController.RegisterComponent<Renderer>(true, false, true);
-        ComponentController.RegisterComponent<ClockFacade>();
+        ComponentController.RegisterComponent<ClockFacade>(true, true, true);
 
-        ComponentController.RegisterComponent<HeroManager>();
-        ComponentController.RegisterComponent<MinionManager>();
-        ComponentController.RegisterComponent<TurretManager>();
-        ComponentController.RegisterComponent<MissileMap>();
+        ComponentController.RegisterComponent<HeroManager>(true, true, true);
+        ComponentController.RegisterComponent<MinionManager>(true, true, true);
+        ComponentController.RegisterComponent<TurretManager>(true, true, true);
+        ComponentController.RegisterComponent<MissileMap>(true, true, true);
     }
 
     /// <summary>
@@ -174,6 +174,7 @@ public class CoreContainer
         logger.Debug("Registering Callbacks...");
         ComponentController.RegisterComponent<OnUpdate>(true, true, true);
         ComponentController.RegisterComponent<OnProcessSpell>(true, true, true);
+        ComponentController.RegisterComponent<OnBuffGain>(true, true, true);
     }
 
     #endregion

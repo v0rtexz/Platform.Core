@@ -29,12 +29,10 @@
 
 #endregion
 
-using Ensage.Data.Game.Types;
-using Ensage.Data.Game.Types.Spells;
-using Ensage.Data.Rendering;
-
 namespace Ensage.Data.Events;
 
+using Ensage.Data.Game.Types;
+using Ensage.Data.Game.Types.Spells;
 using Ensage.Data.Events.Args;
 using Ensage.Data.Game;
 using JetBrains.Annotations;
@@ -66,19 +64,20 @@ public class OnProcessSpell : ICallback
     /// </summary>
     public void TriggerIfConditionMet()
     {
+        bool triggered = false;
+
         foreach (var missile in world.Missiles)
         {
-            OnProcessSpellArgs args = new OnProcessSpellArgs(
-                missile.Value.MissileName,
-                missile.Value.CasterName,
-                missile.Value.CasterNameHash,
-                missile.Value.NetworkID,
-                missile.Value.StartPosition,
-                missile.Value.EndPosition,
-                engine.Clock.GetGameTime(),
-                false,
-                false
-            );
+            OnProcessSpellArgs args = default(OnProcessSpellArgs); // Create a new instance for each missile
+            args.Name = missile.Value.MissileName;
+            args.CasterName = missile.Value.CasterName;
+            args.CasterHash = missile.Value.CasterNameHash;
+            args.NetworkID = 0;
+            args.StartPosition = missile.Value.StartPosition;
+            args.EndPosition = missile.Value.EndPosition;
+            args.StartTime = engine.Clock.GetGameTime();
+            args.IsSpell = true;
+            args.IsAutoAttack = true;
 
             // The hero caster
             AIHeroClient heroCaster = null;
@@ -120,35 +119,36 @@ public class OnProcessSpell : ICallback
                 }
             }
 
-
             // If no hero caster has been stored, it's a minion so we store minionCaster in the args.
             args.Caster = heroCaster != null ? heroCaster : minionCaster;
 
             if (args.Caster != null)
             {
                 EventManager.InvokeCallback<EventDelegate.EvtOnProcessSpell, OnProcessSpellArgs>(args);
-                return;
+                triggered = true;
             }
         }
+
+        if (triggered)
+            return;
 
         foreach (var hero in world.Heroes)
         {
             if (hero.IsCasting)
             {
+                OnProcessSpellArgs args = default(OnProcessSpellArgs); // Create a new instance for each missile
                 ActiveSpell spell = hero.GetActiveSpell();
                 SpellInfo spellInfo = spell.GetSpellInfo();
 
-                OnProcessSpellArgs args = new OnProcessSpellArgs(
-                    spellInfo.SpellName,
-                    hero.ChampionName,
-                    spellInfo.SpellNameHash,
-                    0,
-                    spell.StartPosition,
-                    spell.EndPositiion,
-                    spell.StartTime,
-                    spell.IsAutoAttack,
-                    spell.IsSpell
-                );
+                args.Name = spellInfo.SpellName;
+                args.CasterName = hero.ChampionName;
+                args.CasterHash = hero.HashedName;
+                args.NetworkID = 0;
+                args.StartPosition = spell.StartPosition;
+                args.EndPosition = spell.EndPositiion;
+                args.StartTime = spell.StartTime;
+                args.IsSpell = spell.IsSpell;
+                args.IsAutoAttack = spell.IsAutoAttack;
 
                 args.Caster = hero;
                 EventManager.InvokeCallback<EventDelegate.EvtOnProcessSpell, OnProcessSpellArgs>(args);

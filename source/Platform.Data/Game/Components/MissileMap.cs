@@ -114,6 +114,32 @@ public class MissileMap : IEnumerable<KeyValuePair<long, AIMissileClient>>
         return result != 0;
     }
 
+    public List<KeyValuePair<long, AIMissileClient>> GetMap()
+    {
+        List<KeyValuePair<long, AIMissileClient>> list = new List<KeyValuePair<long, AIMissileClient>>();
+        for (int i = 0; i < GetSize(); i++)
+        {
+            long entryPtr = 0;
+
+            // Get the missile map entries
+            NativeWrapper.ReadProcessMemory<long>(MemoryAccessor.Handle, (IntPtr)(GetMissileMap() + i * 0x8),
+                ref entryPtr);
+
+            long key = GetKey(entryPtr);
+
+            long value = 0;
+
+            if (!GetValue(entryPtr, ref value))
+                continue;
+
+            AIMissileClient missile = new AIMissileClient(value);
+
+            list.Add(new KeyValuePair<long, AIMissileClient>(key, missile));
+        }
+
+        return list;
+    }
+
     public IEnumerator<KeyValuePair<long, AIMissileClient>> GetEnumerator()
     {
         for (int i = 0; i < GetSize(); i++)
@@ -129,7 +155,10 @@ public class MissileMap : IEnumerable<KeyValuePair<long, AIMissileClient>>
             long value = 0;
 
             if (!GetValue(entryPtr, ref value))
+            {
                 continue;
+            }
+               
 
             AIMissileClient missile = new AIMissileClient(value);
 

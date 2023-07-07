@@ -40,7 +40,8 @@ internal class BuffInfo : MemoryObject
 {
     #region Properties
 
-    internal string Name => RiotString.Get(this.address + 0x8);
+    internal string Name => RiotString.Get(this.address + Offsets.BuffInfoName);
+    internal long HashedName => GetProperty<long>(Offsets.BuffInfoName);
 
     #endregion
 

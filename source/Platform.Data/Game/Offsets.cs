@@ -166,6 +166,13 @@ public class Offsets
     #region BuffManager
 
     public const int BuffManagerInstance = 0x27c0;
+    public const int BuffStartTime = 0x18;
+    public const int BuffEndTime = 0x1C;
+    public const int BuffCount = 0x8C;
+    public const int BuffCountAlt = 0x3C;
+    public const int BuffCountAlt2 = 0x38;
+    public const int BuffType = 0x8;
+    public const int BuffInfoName = 0x8;
 
     #endregion
 

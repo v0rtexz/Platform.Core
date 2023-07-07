@@ -29,6 +29,9 @@
 
 #endregion
 
+using Ensage.Data.Memory;
+using ProcessMemoryUtilities.Managed;
+
 namespace Ensage.Data.Game.Types.Buff;
 
 using System.Collections;
@@ -61,8 +64,6 @@ public class BuffManagerEntriesArray : MemoryObject, IEnumerable<BuffEntry>
 
     public IEnumerator<BuffEntry> GetEnumerator()
     {
-        BuffEntry buffEntry = null;
-
         long buffManagerEntriesArrayStart = GetProperty<long>(this.address + Offsets.BuffManagerInstance + 0x18, 0x0);
         long buffManagerEntriesArrayEnd = GetProperty<long>(this.address + Offsets.BuffManagerInstance + 0x20, 0x0);
 
@@ -75,7 +76,19 @@ public class BuffManagerEntriesArray : MemoryObject, IEnumerable<BuffEntry>
 
             if (buffEntryPtr > 0 && buffEntryInfo > 0)
             {
-                yield return new BuffEntry(buffEntryPtr);
+                float gametime = 0f;
+                NativeWrapper.ReadProcessMemory<float>(MemoryAccessor.Handle,
+                    MemoryAccessor.BaseAddress + Offsets.GameTime,
+                    ref gametime);
+
+                // Buff is not alive anymore
+                if (GetProperty<float>(buffEntryPtr,Offsets.BuffEndTime) < gametime)
+                    continue;
+
+                BuffEntry buffEntry = new BuffEntry(buffEntryPtr);
+
+
+                yield return buffEntry;
             }
         }
     }
