@@ -31,6 +31,7 @@
 
 using GameOverlay.Drawing;
 using SDL2;
+using Color = System.Drawing.Color;
 
 namespace Ensage.Data.Rendering;
 
@@ -62,13 +63,38 @@ internal class Present
         this.world = world ?? throw new ArgumentNullException(nameof(world));
         this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 
-        GameOverlay.TimerService.EnableHighPrecisionTimers();
-        Task.Factory.StartNew(() => Graphic.Init());
+        Charm charm = new Charm();
+        charm.CharmSetOptions(Charm.CharmSettings.CHARM_DRAW_FPS);
+        charm.CharmSetOptions(Charm.CharmSettings.CHARM_FONT_COURIER);
 
-        while (!Graphic.IsReady)
-            Thread.Sleep(1);
+        charm.CharmInit(RenderLoop, "League of Legends");
 
         Render();
+    }
+
+    private void RenderLoop(Charm.RPM rpm, Charm.Draw draw, int width, int height)
+    {
+        Drawing.AddText("Enbot", width / 2, 0, System.Drawing.Color.White, 17);
+
+        Renderer.Update();
+        Drawing.Add3DCircle(world.GetLocalPlayer().Pos, 500f);
+        Vector2 vec = Vector2.Zero;
+        Renderer.WorldToScreen(world.GetLocalPlayer().Pos, ref vec);
+        Drawing.AddText(world.GetLocalPlayer().ChampionName, vec, System.Drawing.Color.White, 17);
+
+        EventManager.ExecuteEvent((short)EventID.OnUpdate);
+
+        // Swap the buffers
+        (Drawing.FrontBufferDrawQueue, Drawing.BackBufferDrawQueue) =
+            (Drawing.BackBufferDrawQueue, Drawing.FrontBufferDrawQueue);
+        Drawing.BackBufferDrawQueue.Clear();
+
+        // Render the content from the front buffer
+        while (Drawing.FrontBufferDrawQueue.Count > 0)
+        {
+            var drawing = Drawing.FrontBufferDrawQueue.Dequeue();
+            drawing?.Invoke();
+        }
     }
 
     Task Render()
@@ -78,47 +104,10 @@ internal class Present
         Setup();
         uiScene.OnBuildUI += OnPresent;
 
-        uiScene.FramerateLimit = new FramerateLimit(FramerateLimit.LimitType.Unbounded, 90);
-
 
         while (true)
         {
             uiScene.Update();
-
-            Renderer.Update();
-
-            // Render the frame
-            Graphic.Draw.BeginScene();
-            Graphic.Draw.ClearScene(Graphic.Brushes["background"]);
-
-            Vector2 playerPos = Vector2.Zero;
-            Renderer.WorldToScreen(world.GetLocalPlayer().Pos, ref playerPos);
-
-            Graphic.Draw.DrawShaderLine(playerPos, playerPos + new Vector2(500, 500));
-            foreach (var player in world.Heroes)
-            {
-                Drawing.Add3DCircle(player.Pos, player.AttackRange + 65f, false, 1.2f);
-            }
-
-            Task.Run(() =>
-            {
-                EventManager.InvokeCallback<EventDelegate.EvtOnUpdate, EventArgs>();
-            }); // Wait for the task to complete (optional)
-
-
-            // Swap the buffers
-            (Drawing.FrontBufferDrawQueue, Drawing.BackBufferDrawQueue) =
-                (Drawing.BackBufferDrawQueue, Drawing.FrontBufferDrawQueue);
-            Drawing.BackBufferDrawQueue.Clear();
-
-            // Render the content from the front buffer
-            while (Drawing.FrontBufferDrawQueue.Count > 0)
-            {
-                var drawing = Drawing.FrontBufferDrawQueue.Dequeue();
-                drawing.Invoke();
-            }
-
-            Graphic.Draw.EndScene();
         }
     }
 

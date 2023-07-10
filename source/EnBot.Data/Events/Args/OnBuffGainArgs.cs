@@ -29,34 +29,32 @@
 
 #endregion
 
-using Ensage.Data.Events.Args;
+using System.Numerics;
+using Ensage.Data.Game.Types;
+using Ensage.Data.Game.Types.Buff;
 using JetBrains.Annotations;
-using Serilog;
 
-namespace Ensage.Data.Events;
+namespace Ensage.Data.Events.Args;
 
-/// <summary>
-/// The OnUpdate callback should be triggered every tick.
-/// </summary>
-public class OnUpdate : ICallback
+[PublicAPI]
+public struct OnBuffGainArgs
 {
-    [NotNull] private ILogger logger;
+    public BuffEntry Buff { get; set; }
+    public long BuffHash { get; set; }
+    public AIBaseClient Owner { get; set; }
+    public long OwnerHash { get; set; }
 
-    public OnUpdate(ILogger logger)
+    internal OnBuffGainArgs
+    (
+        BuffEntry buff,
+        long buffHash,
+        AIBaseClient owner,
+        long ownerHash
+    )
     {
-        this.logger = logger;
-        this.InstantiateCallback();
-    }
-
-    /// <summary>
-    /// Triggered every tick.
-    /// </summary>
-    public void TriggerIfConditionMet()
-    {
-    }
-
-    public void InstantiateCallback()
-    {
-        EventManager.RegisterCallback<EventDelegate.EvtOnUpdate>(() => TriggerIfConditionMet());
+        this.Buff = buff;
+        this.BuffHash = buffHash;
+        this.Owner = owner;
+        this.OwnerHash = ownerHash;
     }
 }

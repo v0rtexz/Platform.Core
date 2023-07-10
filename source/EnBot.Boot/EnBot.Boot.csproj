@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Platform.Data\Platform.Data.csproj" />
+    <ProjectReference Include="..\EnBot.Data\EnBot.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

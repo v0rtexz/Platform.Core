@@ -29,6 +29,12 @@
 
 #endregion
 
+using System.Numerics;
+using Ensage.Data.Game.Components;
+using Ensage.Data.Rendering;
+using GameOverlay.Drawing;
+using Color = System.Drawing.Color;
+
 namespace Ensage.Data.Events;
 
 using Ensage.Data.Game.Types;
@@ -124,7 +130,7 @@ public class OnProcessSpell : ICallback
 
             if (args.Caster != null)
             {
-                EventManager.InvokeCallback<EventDelegate.EvtOnProcessSpell, OnProcessSpellArgs>(args);
+                EventManager.ExecuteEvent<OnProcessSpellArgs>((short)EventID.OnProcessSpell, args);
                 triggered = true;
             }
         }
@@ -151,7 +157,7 @@ public class OnProcessSpell : ICallback
                 args.IsAutoAttack = spell.IsAutoAttack;
 
                 args.Caster = hero;
-                EventManager.InvokeCallback<EventDelegate.EvtOnProcessSpell, OnProcessSpellArgs>(args);
+                EventManager.ExecuteEvent<OnProcessSpellArgs>((short)EventID.OnProcessSpell, args);
             }
         }
     }
@@ -163,7 +169,7 @@ public class OnProcessSpell : ICallback
 
     public void InstantiateCallback()
     {
-        EventManager.RegisterCallback<EventDelegate.EvtOnUpdate>(() => TriggerIfConditionMet());
-        EventManager.RegisterCallback<EventDelegate.EvtOnProcessSpell>((args) => Test(args));
+        EventManager.RegisterEvent<OnProcessSpellArgs>((short)EventID.OnProcessSpell, Test);
+        EventManager.RegisterEvent((short)EventID.OnUpdate, TriggerIfConditionMet);
     }
 }

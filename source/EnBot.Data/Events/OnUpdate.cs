@@ -29,48 +29,34 @@
 
 #endregion
 
-using System.Numerics;
-using Ensage.Data.Game.Types;
+using Ensage.Data.Events.Args;
 using JetBrains.Annotations;
+using Serilog;
 
-namespace Ensage.Data.Events.Args;
+namespace Ensage.Data.Events;
 
-[PublicAPI]
-public struct OnBuffGainArgs
+/// <summary>
+/// The OnUpdate callback should be triggered every tick.
+/// </summary>
+public class OnUpdate : ICallback
 {
-    public string Name { get; set; }
-    public string CasterName { get; set; }
-    public AIBaseClient Caster { get; set; }
-    public long CasterHash { get; set; }
-    public long NetworkID { get; set; }
-    public float StartTime { get; set; }
-    public bool IsAutoAttack { get; set; }
-    public bool IsSpell { get; set; }
-    public Vector3 StartPosition { get; set; }
-    public Vector3 EndPosition { get; set; }
+    [NotNull] private ILogger logger;
 
-
-    internal OnBuffGainArgs
-    (
-        string name,
-        string casterName,
-        long casterHash,
-        long networkId,
-        Vector3 startPosition,
-        Vector3 endPosition,
-        float startTime,
-        bool isAutoAttack,
-        bool isSpell
-    )
+    public OnUpdate(ILogger logger)
     {
-        this.Name = name;
-        this.CasterName = casterName;
-        this.CasterHash = casterHash;
-        this.NetworkID = networkId;
-        this.StartPosition = startPosition;
-        this.EndPosition = endPosition;
-        this.StartTime = startTime;
-        this.IsAutoAttack = isAutoAttack;
-        this.IsSpell = isSpell;
+        this.logger = logger;
+        this.InstantiateCallback();
+    }
+
+    /// <summary>
+    /// Triggered every tick.
+    /// </summary>
+    public void TriggerIfConditionMet()
+    {
+    }
+
+    public void InstantiateCallback()
+    {
+        EventManager.RegisterEvent((short)EventID.OnUpdate, TriggerIfConditionMet);
     }
 }

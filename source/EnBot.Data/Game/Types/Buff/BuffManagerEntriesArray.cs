@@ -62,33 +62,34 @@ public class BuffManagerEntriesArray : MemoryObject, IEnumerable<BuffEntry>
 
     #endregion
 
+    private float GetGameTime()
+    {
+        float gameTime = 0f;
+        NativeWrapper.ReadProcessMemory<float>(MemoryAccessor.Handle, MemoryAccessor.BaseAddress + Offsets.GameTime,
+            ref gameTime);
+        return gameTime;
+    }
+
     public IEnumerator<BuffEntry> GetEnumerator()
     {
         long buffManagerEntriesArrayStart = GetProperty<long>(this.address + Offsets.BuffManagerInstance + 0x18, 0x0);
         long buffManagerEntriesArrayEnd = GetProperty<long>(this.address + Offsets.BuffManagerInstance + 0x20, 0x0);
+        float gameTime = GetGameTime(); // Cache the game time outside the loop
 
         for (long i = buffManagerEntriesArrayStart; i != buffManagerEntriesArrayEnd; i += 0x10)
         {
             long buffEntryPtr = GetProperty<long>(i, 0x0);
-
-            // I read buffInfo here already to make sure the buff is valid.
             long buffEntryInfo = GetProperty<long>(buffEntryPtr, 0x10);
 
             if (buffEntryPtr > 0 && buffEntryInfo > 0)
             {
-                float gametime = 0f;
-                NativeWrapper.ReadProcessMemory<float>(MemoryAccessor.Handle,
-                    MemoryAccessor.BaseAddress + Offsets.GameTime,
-                    ref gametime);
+                float buffEndTime = GetProperty<float>(buffEntryPtr, Offsets.BuffEndTime);
 
-                // Buff is not alive anymore
-                if (GetProperty<float>(buffEntryPtr,Offsets.BuffEndTime) < gametime)
-                    continue;
-
-                BuffEntry buffEntry = new BuffEntry(buffEntryPtr);
-
-
-                yield return buffEntry;
+                if (buffEndTime >= gameTime) // Compare directly with the cached game time
+                {
+                    BuffEntry buffEntry = new BuffEntry(buffEntryPtr);
+                    yield return buffEntry;
+                }
             }
         }
     }

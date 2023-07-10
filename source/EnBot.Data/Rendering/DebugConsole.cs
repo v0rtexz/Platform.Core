@@ -34,7 +34,9 @@ using System.Reflection;
 using Ensage.Data.Game;
 using Ensage.Data.Game.Components;
 using Ensage.Data.Game.Types;
+using GameOverlay.Drawing;
 using ImGuiNET;
+using Color = System.Drawing.Color;
 
 namespace Ensage.Data.Rendering;
 
@@ -61,7 +63,7 @@ internal static class DebugConsole
     {
         bool showConsole = true;
 
-        PrintLocalPlayerData();
+        //  PrintLocalPlayerData();
 
         ImGui.Begin("Debug Console", ref showConsole);
 
@@ -93,7 +95,7 @@ internal static class DebugConsole
             selectedObject = debugObjects[selectedIndex];
         }
     }
-    
+
     /// <summary>
     /// Draws a dropdown menu to choose a minion to debug.
     /// </summary>
@@ -157,13 +159,12 @@ internal static class DebugConsole
         PropertyInfo[] properties = objectType.GetProperties();
 
         Vector2 textPos = new Vector2(100, 100);
-        Vector4 col = new Vector4(255, 255, 255, 255);
-        Drawing.AddText("Propertys:", textPos, col);
+        Charm.Draw.DrawString(textPos.X, textPos.Y, "Propertys:", Color.White);
         int i = 10;
         foreach (PropertyInfo property in properties)
         {
             object value = property.GetValue(player);
-            Drawing.AddText($"\n{property.Name}: {value}", new Vector2(textPos.X, textPos.Y + i), col);
+            Charm.Draw.DrawString(textPos.X, textPos.Y, $"\n{property.Name}: {value}", Color.White);
             i += 30;
         }
     }
