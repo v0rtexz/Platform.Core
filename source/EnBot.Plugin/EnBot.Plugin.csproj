@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Authors>Test</Authors>
+    <Version>1</Version>
+    <Company>Test</Company>
+    <Product>Test</Product>
+    <RootNamespace>Ensage.Plugin</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EnBot.Data\EnBot.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ImGui.NET">
+      <HintPath>..\..\libs\imgui.net\ImGuiScene\bin\Debug\net7.0\ImGui.NET.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

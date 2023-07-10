@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platform.Loader", "source\Platform.Loader\Platform.Loader.csproj", "{E4B7B7B6-119D-4758-A772-67C6219D6CF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnBot.Boot", "source\EnBot.Boot\EnBot.Boot.csproj", "{E4B7B7B6-119D-4758-A772-67C6219D6CF4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platform.Plugin", "source\Platform.Plugin\Platform.Plugin.csproj", "{C1A81A1E-3ADC-453A-B414-CE5C62EDAF6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnBot.Plugin", "source\EnBot.Plugin\EnBot.Plugin.csproj", "{C1A81A1E-3ADC-453A-B414-CE5C62EDAF6C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platform.Plugin2", "source\Platform.Plugin2\Platform.Plugin2.csproj", "{59EA0EF7-76B3-4605-899B-F447C81C725C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnBot.Plugin2", "source\EnBot.Plugin2\EnBot.Plugin2.csproj", "{59EA0EF7-76B3-4605-899B-F447C81C725C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platform.Data", "source\Platform.Data\Platform.Data.csproj", "{503B5B20-29C4-4FD7-A58B-3F5358B51E1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnBot.Data", "source\EnBot.Data\EnBot.Data.csproj", "{503B5B20-29C4-4FD7-A58B-3F5358B51E1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
