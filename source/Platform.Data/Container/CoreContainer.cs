@@ -30,6 +30,7 @@
 #endregion
 
 using Autofac;
+
 using Ensage.Data.Events;
 using Ensage.Data.Events.Args;
 using Ensage.Data.Game;
@@ -38,7 +39,9 @@ using Ensage.Data.Game.Components.ManagerTemplates;
 using Ensage.Data.Memory;
 using Ensage.Data.Rendering;
 using Ensage.Data.Utils;
+
 using JetBrains.Annotations;
+
 using Serilog;
 using Serilog.Events;
 
@@ -54,19 +57,23 @@ public class CoreContainer
     /// <summary>
     /// The built container
     /// </summary>
-    [NotNull] private static IContainer? container;
+    [NotNull]
+    private static IContainer? container;
 
     /// <summary>
     /// The lifetime scope of the container
     /// </summary>
-    [NotNull] private static ILifetimeScope? scope;
+    [NotNull]
+    private static ILifetimeScope? scope;
 
     /// <summary>
     /// The builder of the container.
     /// </summary>
-    [NotNull] private static ContainerBuilder? containerBuilder;
+    [NotNull]
+    private static ContainerBuilder? containerBuilder;
 
-    [NotNull] private static Serilog.Core.Logger logger;
+    [NotNull]
+    private static Serilog.Core.Logger logger;
 
     #endregion
 
@@ -136,7 +143,7 @@ public class CoreContainer
         // Build the containers
         logger.Write(LogEventLevel.Debug, "Building core container...");
         container = containerBuilder.Build();
-
+        
         if (container == null)
         {
             logger.Write(LogEventLevel.Fatal, "Failed to build core container!");
